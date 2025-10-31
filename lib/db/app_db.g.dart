@@ -32,16 +32,16 @@ class $SavingsTable extends Savings with TableInfo<$SavingsTable, Saving> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _itemEmojiMeta = const VerificationMeta(
-    'itemEmoji',
+  static const VerificationMeta _itemIconNameMeta = const VerificationMeta(
+    'itemIconName',
   );
   @override
-  late final GeneratedColumn<String> itemEmoji = GeneratedColumn<String>(
-    'item_emoji',
+  late final GeneratedColumn<String> itemIconName = GeneratedColumn<String>(
+    'item_icon_name',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _amountMeta = const VerificationMeta('amount');
   @override
@@ -110,7 +110,7 @@ class $SavingsTable extends Savings with TableInfo<$SavingsTable, Saving> {
   List<GeneratedColumn> get $columns => [
     id,
     itemName,
-    itemEmoji,
+    itemIconName,
     amount,
     symbol,
     investmentName,
@@ -141,13 +141,14 @@ class $SavingsTable extends Savings with TableInfo<$SavingsTable, Saving> {
     } else if (isInserting) {
       context.missing(_itemNameMeta);
     }
-    if (data.containsKey('item_emoji')) {
+    if (data.containsKey('item_icon_name')) {
       context.handle(
-        _itemEmojiMeta,
-        itemEmoji.isAcceptableOrUnknown(data['item_emoji']!, _itemEmojiMeta),
+        _itemIconNameMeta,
+        itemIconName.isAcceptableOrUnknown(
+          data['item_icon_name']!,
+          _itemIconNameMeta,
+        ),
       );
-    } else if (isInserting) {
-      context.missing(_itemEmojiMeta);
     }
     if (data.containsKey('amount')) {
       context.handle(
@@ -215,10 +216,10 @@ class $SavingsTable extends Savings with TableInfo<$SavingsTable, Saving> {
         DriftSqlType.string,
         data['${effectivePrefix}item_name'],
       )!,
-      itemEmoji: attachedDatabase.typeMapping.read(
+      itemIconName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}item_emoji'],
-      )!,
+        data['${effectivePrefix}item_icon_name'],
+      ),
       amount: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}amount'],
@@ -255,7 +256,7 @@ class $SavingsTable extends Savings with TableInfo<$SavingsTable, Saving> {
 class Saving extends DataClass implements Insertable<Saving> {
   final int id;
   final String itemName;
-  final String itemEmoji;
+  final String? itemIconName;
   final double amount;
   final String symbol;
   final String investmentName;
@@ -265,7 +266,7 @@ class Saving extends DataClass implements Insertable<Saving> {
   const Saving({
     required this.id,
     required this.itemName,
-    required this.itemEmoji,
+    this.itemIconName,
     required this.amount,
     required this.symbol,
     required this.investmentName,
@@ -278,7 +279,9 @@ class Saving extends DataClass implements Insertable<Saving> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['item_name'] = Variable<String>(itemName);
-    map['item_emoji'] = Variable<String>(itemEmoji);
+    if (!nullToAbsent || itemIconName != null) {
+      map['item_icon_name'] = Variable<String>(itemIconName);
+    }
     map['amount'] = Variable<double>(amount);
     map['symbol'] = Variable<String>(symbol);
     map['investment_name'] = Variable<String>(investmentName);
@@ -292,7 +295,9 @@ class Saving extends DataClass implements Insertable<Saving> {
     return SavingsCompanion(
       id: Value(id),
       itemName: Value(itemName),
-      itemEmoji: Value(itemEmoji),
+      itemIconName: itemIconName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(itemIconName),
       amount: Value(amount),
       symbol: Value(symbol),
       investmentName: Value(investmentName),
@@ -310,7 +315,7 @@ class Saving extends DataClass implements Insertable<Saving> {
     return Saving(
       id: serializer.fromJson<int>(json['id']),
       itemName: serializer.fromJson<String>(json['itemName']),
-      itemEmoji: serializer.fromJson<String>(json['itemEmoji']),
+      itemIconName: serializer.fromJson<String?>(json['itemIconName']),
       amount: serializer.fromJson<double>(json['amount']),
       symbol: serializer.fromJson<String>(json['symbol']),
       investmentName: serializer.fromJson<String>(json['investmentName']),
@@ -325,7 +330,7 @@ class Saving extends DataClass implements Insertable<Saving> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'itemName': serializer.toJson<String>(itemName),
-      'itemEmoji': serializer.toJson<String>(itemEmoji),
+      'itemIconName': serializer.toJson<String?>(itemIconName),
       'amount': serializer.toJson<double>(amount),
       'symbol': serializer.toJson<String>(symbol),
       'investmentName': serializer.toJson<String>(investmentName),
@@ -338,7 +343,7 @@ class Saving extends DataClass implements Insertable<Saving> {
   Saving copyWith({
     int? id,
     String? itemName,
-    String? itemEmoji,
+    Value<String?> itemIconName = const Value.absent(),
     double? amount,
     String? symbol,
     String? investmentName,
@@ -348,7 +353,7 @@ class Saving extends DataClass implements Insertable<Saving> {
   }) => Saving(
     id: id ?? this.id,
     itemName: itemName ?? this.itemName,
-    itemEmoji: itemEmoji ?? this.itemEmoji,
+    itemIconName: itemIconName.present ? itemIconName.value : this.itemIconName,
     amount: amount ?? this.amount,
     symbol: symbol ?? this.symbol,
     investmentName: investmentName ?? this.investmentName,
@@ -360,7 +365,9 @@ class Saving extends DataClass implements Insertable<Saving> {
     return Saving(
       id: data.id.present ? data.id.value : this.id,
       itemName: data.itemName.present ? data.itemName.value : this.itemName,
-      itemEmoji: data.itemEmoji.present ? data.itemEmoji.value : this.itemEmoji,
+      itemIconName: data.itemIconName.present
+          ? data.itemIconName.value
+          : this.itemIconName,
       amount: data.amount.present ? data.amount.value : this.amount,
       symbol: data.symbol.present ? data.symbol.value : this.symbol,
       investmentName: data.investmentName.present
@@ -379,7 +386,7 @@ class Saving extends DataClass implements Insertable<Saving> {
     return (StringBuffer('Saving(')
           ..write('id: $id, ')
           ..write('itemName: $itemName, ')
-          ..write('itemEmoji: $itemEmoji, ')
+          ..write('itemIconName: $itemIconName, ')
           ..write('amount: $amount, ')
           ..write('symbol: $symbol, ')
           ..write('investmentName: $investmentName, ')
@@ -394,7 +401,7 @@ class Saving extends DataClass implements Insertable<Saving> {
   int get hashCode => Object.hash(
     id,
     itemName,
-    itemEmoji,
+    itemIconName,
     amount,
     symbol,
     investmentName,
@@ -408,7 +415,7 @@ class Saving extends DataClass implements Insertable<Saving> {
       (other is Saving &&
           other.id == this.id &&
           other.itemName == this.itemName &&
-          other.itemEmoji == this.itemEmoji &&
+          other.itemIconName == this.itemIconName &&
           other.amount == this.amount &&
           other.symbol == this.symbol &&
           other.investmentName == this.investmentName &&
@@ -420,7 +427,7 @@ class Saving extends DataClass implements Insertable<Saving> {
 class SavingsCompanion extends UpdateCompanion<Saving> {
   final Value<int> id;
   final Value<String> itemName;
-  final Value<String> itemEmoji;
+  final Value<String?> itemIconName;
   final Value<double> amount;
   final Value<String> symbol;
   final Value<String> investmentName;
@@ -430,7 +437,7 @@ class SavingsCompanion extends UpdateCompanion<Saving> {
   const SavingsCompanion({
     this.id = const Value.absent(),
     this.itemName = const Value.absent(),
-    this.itemEmoji = const Value.absent(),
+    this.itemIconName = const Value.absent(),
     this.amount = const Value.absent(),
     this.symbol = const Value.absent(),
     this.investmentName = const Value.absent(),
@@ -441,7 +448,7 @@ class SavingsCompanion extends UpdateCompanion<Saving> {
   SavingsCompanion.insert({
     this.id = const Value.absent(),
     required String itemName,
-    required String itemEmoji,
+    this.itemIconName = const Value.absent(),
     required double amount,
     required String symbol,
     required String investmentName,
@@ -449,7 +456,6 @@ class SavingsCompanion extends UpdateCompanion<Saving> {
     required double returnPct,
     this.createdAt = const Value.absent(),
   }) : itemName = Value(itemName),
-       itemEmoji = Value(itemEmoji),
        amount = Value(amount),
        symbol = Value(symbol),
        investmentName = Value(investmentName),
@@ -458,7 +464,7 @@ class SavingsCompanion extends UpdateCompanion<Saving> {
   static Insertable<Saving> custom({
     Expression<int>? id,
     Expression<String>? itemName,
-    Expression<String>? itemEmoji,
+    Expression<String>? itemIconName,
     Expression<double>? amount,
     Expression<String>? symbol,
     Expression<String>? investmentName,
@@ -469,7 +475,7 @@ class SavingsCompanion extends UpdateCompanion<Saving> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (itemName != null) 'item_name': itemName,
-      if (itemEmoji != null) 'item_emoji': itemEmoji,
+      if (itemIconName != null) 'item_icon_name': itemIconName,
       if (amount != null) 'amount': amount,
       if (symbol != null) 'symbol': symbol,
       if (investmentName != null) 'investment_name': investmentName,
@@ -482,7 +488,7 @@ class SavingsCompanion extends UpdateCompanion<Saving> {
   SavingsCompanion copyWith({
     Value<int>? id,
     Value<String>? itemName,
-    Value<String>? itemEmoji,
+    Value<String?>? itemIconName,
     Value<double>? amount,
     Value<String>? symbol,
     Value<String>? investmentName,
@@ -493,7 +499,7 @@ class SavingsCompanion extends UpdateCompanion<Saving> {
     return SavingsCompanion(
       id: id ?? this.id,
       itemName: itemName ?? this.itemName,
-      itemEmoji: itemEmoji ?? this.itemEmoji,
+      itemIconName: itemIconName ?? this.itemIconName,
       amount: amount ?? this.amount,
       symbol: symbol ?? this.symbol,
       investmentName: investmentName ?? this.investmentName,
@@ -512,8 +518,8 @@ class SavingsCompanion extends UpdateCompanion<Saving> {
     if (itemName.present) {
       map['item_name'] = Variable<String>(itemName.value);
     }
-    if (itemEmoji.present) {
-      map['item_emoji'] = Variable<String>(itemEmoji.value);
+    if (itemIconName.present) {
+      map['item_icon_name'] = Variable<String>(itemIconName.value);
     }
     if (amount.present) {
       map['amount'] = Variable<double>(amount.value);
@@ -541,7 +547,7 @@ class SavingsCompanion extends UpdateCompanion<Saving> {
     return (StringBuffer('SavingsCompanion(')
           ..write('id: $id, ')
           ..write('itemName: $itemName, ')
-          ..write('itemEmoji: $itemEmoji, ')
+          ..write('itemIconName: $itemIconName, ')
           ..write('amount: $amount, ')
           ..write('symbol: $symbol, ')
           ..write('investmentName: $investmentName, ')
@@ -1425,7 +1431,7 @@ typedef $$SavingsTableCreateCompanionBuilder =
     SavingsCompanion Function({
       Value<int> id,
       required String itemName,
-      required String itemEmoji,
+      Value<String?> itemIconName,
       required double amount,
       required String symbol,
       required String investmentName,
@@ -1437,7 +1443,7 @@ typedef $$SavingsTableUpdateCompanionBuilder =
     SavingsCompanion Function({
       Value<int> id,
       Value<String> itemName,
-      Value<String> itemEmoji,
+      Value<String?> itemIconName,
       Value<double> amount,
       Value<String> symbol,
       Value<String> investmentName,
@@ -1464,8 +1470,8 @@ class $$SavingsTableFilterComposer extends Composer<_$AppDb, $SavingsTable> {
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get itemEmoji => $composableBuilder(
-    column: $table.itemEmoji,
+  ColumnFilters<String> get itemIconName => $composableBuilder(
+    column: $table.itemIconName,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1518,8 +1524,8 @@ class $$SavingsTableOrderingComposer extends Composer<_$AppDb, $SavingsTable> {
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get itemEmoji => $composableBuilder(
-    column: $table.itemEmoji,
+  ColumnOrderings<String> get itemIconName => $composableBuilder(
+    column: $table.itemIconName,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -1569,8 +1575,10 @@ class $$SavingsTableAnnotationComposer
   GeneratedColumn<String> get itemName =>
       $composableBuilder(column: $table.itemName, builder: (column) => column);
 
-  GeneratedColumn<String> get itemEmoji =>
-      $composableBuilder(column: $table.itemEmoji, builder: (column) => column);
+  GeneratedColumn<String> get itemIconName => $composableBuilder(
+    column: $table.itemIconName,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<double> get amount =>
       $composableBuilder(column: $table.amount, builder: (column) => column);
@@ -1625,7 +1633,7 @@ class $$SavingsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> itemName = const Value.absent(),
-                Value<String> itemEmoji = const Value.absent(),
+                Value<String?> itemIconName = const Value.absent(),
                 Value<double> amount = const Value.absent(),
                 Value<String> symbol = const Value.absent(),
                 Value<String> investmentName = const Value.absent(),
@@ -1635,7 +1643,7 @@ class $$SavingsTableTableManager
               }) => SavingsCompanion(
                 id: id,
                 itemName: itemName,
-                itemEmoji: itemEmoji,
+                itemIconName: itemIconName,
                 amount: amount,
                 symbol: symbol,
                 investmentName: investmentName,
@@ -1647,7 +1655,7 @@ class $$SavingsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String itemName,
-                required String itemEmoji,
+                Value<String?> itemIconName = const Value.absent(),
                 required double amount,
                 required String symbol,
                 required String investmentName,
@@ -1657,7 +1665,7 @@ class $$SavingsTableTableManager
               }) => SavingsCompanion.insert(
                 id: id,
                 itemName: itemName,
-                itemEmoji: itemEmoji,
+                itemIconName: itemIconName,
                 amount: amount,
                 symbol: symbol,
                 investmentName: investmentName,

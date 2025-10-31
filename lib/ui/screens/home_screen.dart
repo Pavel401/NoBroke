@@ -14,8 +14,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int? selectedYear; // null = all years
-  int? selectedMonth; // 1-12, null = all months
+  int? selectedYear;
+  int? selectedMonth;
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +223,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Icon(iconFromName(s.itemIconName), size: 22.sp),
+                                            Icon(
+                                              iconFromName(s.itemIconName),
+                                              size: 22.sp,
+                                            ),
                                             SizedBox(width: 3.w),
                                             Expanded(
                                               child: Column(

@@ -40,7 +40,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Create a custom purchase with emoji + category', style: TextStyle(fontSize: 11.sp)),
+              Text('Create a custom purchase with icon + category', style: TextStyle(fontSize: 11.sp)),
               SizedBox(height: 2.h),
               TextFormField(
                 controller: _nameCtrl,

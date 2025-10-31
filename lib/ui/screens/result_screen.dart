@@ -6,6 +6,7 @@ import '../../controllers/selection_controller.dart';
 import '../../controllers/market_controller.dart';
 import '../../services/market_service.dart';
 import '../../db/app_db.dart';
+import 'package:drift/drift.dart' as d;
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -102,7 +103,7 @@ class _ResultScreenState extends State<ResultScreen> {
                           investmentName: selection.selectedInvestmentName.value,
                           finalValue: grown,
                           returnPct: returnPct,
-                          itemIconName: Value(selection.selectedItemIconName.value.isEmpty
+                          itemIconName: d.Value(selection.selectedItemIconName.value.isEmpty
                               ? null
                               : selection.selectedItemIconName.value),
                         ));

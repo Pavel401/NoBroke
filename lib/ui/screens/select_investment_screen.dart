@@ -35,4 +35,3 @@ class SelectInvestmentScreen extends StatelessWidget {
     );
   }
 }
-

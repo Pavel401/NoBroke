@@ -48,7 +48,7 @@ class AppDb extends _$AppDb {
   AppDb() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -60,15 +60,93 @@ class AppDb extends _$AppDb {
         await m.createTable(catalogItems);
       }
       if (from < 3) {
-        // Add new nullable column for icon name; keep existing data
-        await m.addColumn(savings, savings.itemIconName);
+        // Recreate savings table without legacy NOT NULL item_emoji column.
+        // 1) Create new table with the desired schema
+        await m.database.customStatement('''
+          CREATE TABLE IF NOT EXISTS savings_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            item_name TEXT NOT NULL,
+            item_icon_name TEXT,
+            amount REAL NOT NULL,
+            symbol TEXT NOT NULL,
+            investment_name TEXT NOT NULL,
+            final_value REAL NOT NULL,
+            return_pct REAL NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+          );
+        ''');
+        // 2) Copy data from old table, dropping the old emoji column
+        await m.database.customStatement('''
+          INSERT INTO savings_new (id, item_name, amount, symbol, investment_name, final_value, return_pct, created_at)
+          SELECT id, item_name, amount, symbol, investment_name, final_value, return_pct, created_at FROM savings;
+        ''');
+        // 3) Replace old table
+        await m.database.customStatement('DROP TABLE savings;');
+        await m.database.customStatement(
+          'ALTER TABLE savings_new RENAME TO savings;',
+        );
+      }
+      if (from < 4) {
+        // Ensure databases that were already at v3 but still had NOT NULL item_emoji
+        // are migrated by recreating the table to the latest schema.
+        await m.database.customStatement('''
+          CREATE TABLE IF NOT EXISTS savings_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            item_name TEXT NOT NULL,
+            item_icon_name TEXT,
+            amount REAL NOT NULL,
+            symbol TEXT NOT NULL,
+            investment_name TEXT NOT NULL,
+            final_value REAL NOT NULL,
+            return_pct REAL NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+          );
+        ''');
+        await m.database.customStatement('''
+          INSERT INTO savings_new (id, item_name, amount, symbol, investment_name, final_value, return_pct, created_at)
+          SELECT id, item_name, amount, symbol, investment_name, final_value, return_pct, created_at FROM savings;
+        ''');
+        await m.database.customStatement('DROP TABLE savings;');
+        await m.database.customStatement(
+          'ALTER TABLE savings_new RENAME TO savings;',
+        );
+      }
+      if (from < 5) {
+        // Fix created_at to have DEFAULT CURRENT_TIMESTAMP for existing v4 installs
+        await m.database.customStatement('''
+          CREATE TABLE IF NOT EXISTS savings_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            item_name TEXT NOT NULL,
+            item_icon_name TEXT,
+            amount REAL NOT NULL,
+            symbol TEXT NOT NULL,
+            investment_name TEXT NOT NULL,
+            final_value REAL NOT NULL,
+            return_pct REAL NOT NULL,
+            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+          );
+        ''');
+        await m.database.customStatement('''
+          INSERT INTO savings_new (id, item_name, amount, symbol, investment_name, final_value, return_pct, created_at)
+          SELECT id, item_name, amount, symbol, investment_name, final_value, return_pct, created_at FROM savings;
+        ''');
+        await m.database.customStatement('DROP TABLE savings;');
+        await m.database.customStatement(
+          'ALTER TABLE savings_new RENAME TO savings;',
+        );
       }
     },
   );
 
   // Savings ops
   Stream<List<Saving>> watchSavings() => select(savings).watch();
-  Future<int> addSaving(SavingsCompanion data) => into(savings).insert(data);
+  Future<int> addSaving(SavingsCompanion data) {
+    final payload = data.createdAt.present
+        ? data
+        : data.copyWith(createdAt: Value(DateTime.now()));
+    return into(savings).insert(payload);
+  }
+
   Future<void> clearSavings() => delete(savings).go();
   Future<int> deleteSaving(int id) =>
       (delete(savings)..where((tbl) => tbl.id.equals(id))).go();
