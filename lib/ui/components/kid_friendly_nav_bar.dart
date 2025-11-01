@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -247,13 +248,22 @@ class _KidFriendlyNavBarState extends State<KidFriendlyNavBar>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // Emoji icon
-                            Text(
-                              destination.emoji,
-                              style: TextStyle(
-                                fontSize: isSelected
-                                    ? selectedIconSize
-                                    : iconSize,
-                              ),
+                            // Text(
+                            //   destination.emoji,
+                            //   style: TextStyle(
+                            //     fontSize: isSelected
+                            //         ? selectedIconSize
+                            //         : iconSize,
+                            //   ),
+                            // ),
+                            Lottie.asset(
+                              destination.lottieJson,
+
+                              width: isSelected ? selectedIconSize : iconSize,
+                              height: isSelected ? selectedIconSize : iconSize,
+                              fit: BoxFit.contain,
+                              repeat: true,
+                              animate: true,
                             ),
                             if (destination.hasNotification) ...[
                               SizedBox(width: isTablet ? 2.w : 0.5.w),
@@ -338,12 +348,14 @@ class _KidFriendlyNavBarState extends State<KidFriendlyNavBar>
 
 class KidNavDestination {
   final String emoji;
+  final String lottieJson;
   final String label;
   final Color selectedColor;
   final bool hasNotification;
 
   const KidNavDestination({
     required this.emoji,
+    required this.lottieJson,
     required this.label,
     required this.selectedColor,
     this.hasNotification = false,

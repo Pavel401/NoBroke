@@ -98,22 +98,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 1.h),
-                    AnimatedBuilder(
-                      animation: themeProvider,
-                      builder: (context, _) => TapTile(
-                        title: 'Dark Mode',
-                        subtitle: 'Reduce eye strain with a darker theme',
-                        leadingIcon: Icons.dark_mode_outlined,
-                        trailing: Switch.adaptive(
-                          value: themeProvider.isDarkMode,
-                          onChanged: (_) => themeProvider.toggleTheme(),
-                        ),
-                        onTap: null,
-                      ),
-                    ),
-                    SizedBox(height: 2.h),
-
+                    // SizedBox(height: 1.h),
+                    // AnimatedBuilder(
+                    //   animation: themeProvider,
+                    //   builder: (context, _) => TapTile(
+                    //     title: 'Dark Mode',
+                    //     subtitle: 'Reduce eye strain with a darker theme',
+                    //     leadingIcon: Icons.dark_mode_outlined,
+                    //     trailing: Switch.adaptive(
+                    //       value: themeProvider.isDarkMode,
+                    //       onChanged: (_) => themeProvider.toggleTheme(),
+                    //     ),
+                    //     onTap: null,
+                    //   ),
+                    // ),
+                    // SizedBox(height: 2.h),
                     TapTile(
                       title: 'Profile',
                       subtitle: 'Set your name, image, and date of birth',

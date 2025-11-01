@@ -48,9 +48,11 @@ class _WhatIfAppState extends State<WhatIfApp> {
             debugShowCheckedModeBanner: false,
             theme: _themeProvider.lightTheme,
             darkTheme: _themeProvider.darkTheme,
-            themeMode: _themeProvider.isDarkMode
-                ? ThemeMode.dark
-                : ThemeMode.light,
+
+            // themeMode: _themeProvider.isDarkMode
+            //     ? ThemeMode.dark
+            //     : ThemeMode.light,
+            themeMode: ThemeMode.light,
             initialRoute: AppPages.initial,
             getPages: AppPages.pages,
           ),

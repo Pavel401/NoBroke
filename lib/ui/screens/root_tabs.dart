@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:growthapp/ui/colors.dart';
+import 'package:growthapp/ui/components/kid_friendly_nav_bar.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,8 +9,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'home_screen.dart';
 import 'analytics_screen.dart';
 import 'settings_screen.dart';
-import '../components/kid_friendly_nav_bar.dart';
-import '../colors.dart';
 
 class RootTabs extends StatefulWidget {
   const RootTabs({super.key});
@@ -38,7 +38,7 @@ class _RootTabsState extends State<RootTabs> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final pages = const [HomeScreen(), AnalyticsScreen(), SettingsScreen()];
+    final pages = [HomeScreen(), AnalyticsScreen(), SettingsScreen()];
     return Scaffold(
       extendBody: true,
       backgroundColor: TurfitColors.surfaceLight,
@@ -49,17 +49,22 @@ class _RootTabsState extends State<RootTabs> with TickerProviderStateMixin {
         destinations: const [
           KidNavDestination(
             emoji: '🏠',
+            lottieJson: "assets/lotties/savings.json",
             label: 'My Savings',
             selectedColor: TurfitColors.primaryLight,
           ),
           KidNavDestination(
             emoji: '📈',
             label: 'Growth Chart',
+            lottieJson: "assets/lotties/analytics.json",
+
             selectedColor: TurfitColors.tertiaryLight,
           ),
           KidNavDestination(
             emoji: '⚙️',
             label: 'Settings',
+            lottieJson: "assets/lotties/settings.json",
+
             selectedColor: TurfitColors.secondaryLight,
             hasNotification: true, // For profile setup reminder
           ),
