@@ -48,30 +48,44 @@ class _EnterPriceScreenState extends State<EnterPriceScreen> {
                 children: [
                   leading,
                   SizedBox(width: 3.w),
-                  Text(selection.selectedItemName.value,
-                      style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600)),
+                  Text(
+                    selection.selectedItemName.value,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ],
               );
             }),
             SizedBox(height: 2.h),
             TextField(
               controller: _controller,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(labelText: 'How much are you spending?'),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: const InputDecoration(
+                labelText: 'How much are you spending?',
+              ),
             ),
             SizedBox(height: 3.h),
             ElevatedButton(
               onPressed: () {
-                final value = double.tryParse(_controller.text.replaceAll(',', ''));
+                final value = double.tryParse(
+                  _controller.text.replaceAll(',', ''),
+                );
                 if (value == null || value <= 0) {
-                  Get.snackbar('Invalid amount', 'Please enter a positive number');
+                  Get.snackbar(
+                    'Invalid amount',
+                    'Please enter a positive number',
+                  );
                   return;
                 }
                 selection.setPrice(value);
                 Get.toNamed(Routes.selectInvestment);
               },
               child: const Text('Next'),
-            )
+            ),
           ],
         ),
       ),

@@ -3,7 +3,11 @@ class Item {
   final double defaultPrice;
   final String emoji;
 
-  const Item({required this.name, required this.defaultPrice, required this.emoji});
+  const Item({
+    required this.name,
+    required this.defaultPrice,
+    required this.emoji,
+  });
 }
 
 // A small starter set; easy to expand to 100+ later.
@@ -16,4 +20,3 @@ const items = <Item>[
   Item(name: 'AirPods', defaultPrice: 129, emoji: '🎧'),
   Item(name: 'Starbucks Drink', defaultPrice: 7, emoji: '☕'),
 ];
-

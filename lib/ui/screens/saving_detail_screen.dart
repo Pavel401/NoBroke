@@ -31,8 +31,14 @@ class SavingDetailScreen extends StatelessWidget {
                   title: const Text('Delete saving?'),
                   content: const Text('This action cannot be undone.'),
                   actions: [
-                    TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-                    FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
+                    TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: const Text('Cancel'),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: const Text('Delete'),
+                    ),
                   ],
                 ),
               );
@@ -58,17 +64,34 @@ class SavingDetailScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('${saving.itemName} → ${saving.investmentName}',
-                          style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600)),
-                      Text(df.format(saving.createdAt), style: TextStyle(fontSize: 10.sp, color: Colors.grey[700])),
+                      Text(
+                        '${saving.itemName} → ${saving.investmentName}',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        df.format(saving.createdAt),
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          color: Colors.grey[700],
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
             SizedBox(height: 2.h),
-            Text('Base amount: ${_money(base)}', style: TextStyle(fontSize: 12.sp)),
-            Text('1-year return: ${saving.returnPct.toStringAsFixed(0)}%', style: TextStyle(fontSize: 12.sp)),
+            Text(
+              'Base amount: ${_money(base)}',
+              style: TextStyle(fontSize: 12.sp),
+            ),
+            Text(
+              '1-year return: ${saving.returnPct.toStringAsFixed(0)}%',
+              style: TextStyle(fontSize: 12.sp),
+            ),
             SizedBox(height: 2.h),
             Container(
               padding: EdgeInsets.all(4.w),
@@ -79,8 +102,13 @@ class SavingDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Projected Value (compounded)',
-                      style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w600)),
+                  Text(
+                    'Projected Value (compounded)',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   SizedBox(height: 1.h),
                   ...List.generate(5, (i) {
                     final years = i + 1;
@@ -95,15 +123,25 @@ class SavingDetailScreen extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text(_money(value), style: const TextStyle(fontWeight: FontWeight.w600)),
-                              Text('+${_money(inc)} (+${saving.returnPct.toStringAsFixed(0)}%)',
-                                  style: TextStyle(color: Colors.grey[700], fontSize: 10.sp)),
+                              Text(
+                                _money(value),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                '+${_money(inc)} (+${saving.returnPct.toStringAsFixed(0)}%)',
+                                style: TextStyle(
+                                  color: Colors.grey[700],
+                                  fontSize: 10.sp,
+                                ),
+                              ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     );
-                  })
+                  }),
                 ],
               ),
             ),

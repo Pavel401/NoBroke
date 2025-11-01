@@ -1,0 +1,98 @@
+﻿App Brief: "What If I Invested?"
+Tagline: Turn everyday choices into what-ifs that grow.
+
+1. Purpose & Vision
+"What If I Invested?" is a simple, interactive app designed to make teens think differently about money.
+By turning everyday spending choices into potential investment scenarios, it helps young users connect short-term spending with long-term growth - encouraging curiosity, awareness, and saving habits early on.
+
+2. Core Concept
+Teens often spend without realizing the opportunity cost of small daily purchases.
+This app lets them visualize - instantly - what that same amount could be worth today if they had invested it instead.
+Example:
+You were about to spend $12 on pizza 🍕.
+What if you had invested it in NVIDIA (NVDA) one year ago?
+Result: $12 → $21.60 (+80%)
+Past performance is not an indicator of future results.
+
+3. Key Features
+a. No Login Needed
+* Instant access - open and use.
+* Keeps it lightweight and safe for minors.
+* Optional "Save My Session" or "Share Result" toggle (local only, no accounts).
+b. Item Database (100+ Teen Purchases)
+* Search or scroll through everyday items: pizza, sneakers, bubble tea, hoodies, AirPods, video games, etc.
+* Each item has a typical price, but users can edit it.
+* Categories: Food, Fashion, Tech, Entertainment, School, Lifestyle.
+c. Investment Comparison Engine
+* Choose from 15 investment options:
+Amazon, Meta, Alphabet, Nvidia, Walmart, Costco, Nike, LLY (Eli Lilly), McDonald's, Apple, Tesla, SPY, VOO, QQQ, and Bitcoin (optional).
+* Calculates 1-year growth using the past year's actual performance data (fetched via API or cached weekly).
+* Displays:
+o Amount today vs. if invested 1 year ago
+o % return
+o Simple bar or growth chart
+d. Educational Nudges
+Each result screen ends with:
+* "💡 Past performance is not an indicator of future results."
+* A fun fact or tip (e.g., "Teens who invest early benefit from compounding power.")
+* Optional "Learn More" link: Basics of saving, investing, and compound growth (simple illustrated pages).
+
+4. User Flow
+1. Open App → Welcome screen
+"What are you about to buy today?"
+2. Search or browse item → Select one (e.g., Sneakers)
+3. Enter or confirm price → "I'm spending $120."
+4. Choose investment → Select a company or ETF (e.g., Nike)
+5. Results screen →
+o "If you had invested $120 in Nike one year ago..."
+o "You'd have $158.40 today (+32%)."
+o Message: Past performance is not an indicator of future results.
+o CTA: "Try another item" or "See how investing works."
+
+5. Visual & UX Style
+* Minimalist, Gen-Z-friendly design:
+bold typography, pastel gradients, emoji icons, smooth transitions.
+* Tone: Conversational, encouraging, slightly witty.
+* Color palette: Mint green + navy (growth & trust).
+* Optional gamified streaks: "You've rethought 10 purchases this week!"
+
+6. Data Source
+* Use a reliable market data API such as Alpha Vantage or Yahoo Finance to pull 1-year historical returns for selected companies and ETFs.
+* Data should refresh automatically on a weekly or monthly schedule.
+
+7. Developer Collaboration Requirement
+* The developer will not only build the app but also mentor a 9th-grade student through the process.
+* This includes:
+o Explaining the overall app architecture and logic flow.
+o Demonstrating how the item database and investment calculator work.
+o Walking through one example end-to-end: from item selection → data fetch → return calculation → result screen.
+o Encouraging hands-on participation in testing and minor updates (e.g., adding a new item or editing labels).
+* Goal: Help the student understand how real-world finance and app logic connect - bridging coding with financial literacy.
+
+
+9. Example Scenarios
+Item
+Price
+Investment
+1-Year Return
+What If I Invested?
+Starbucks drink
+$7
+Nvidia
++180%
+$19.60
+Hoodie
+$40
+SPY ETF
++26%
+$50.40
+Game pass
+$10
+Meta
++35%
+$13.50
+
+11. Goal
+To flip the way teens see spending - from "what can I buy?" to "what could I build?"
+"What If I Invested?" transforms curiosity into awareness and everyday choices into lifelong financial literacy.
+

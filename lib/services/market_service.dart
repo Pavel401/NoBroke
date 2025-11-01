@@ -16,10 +16,15 @@ class MarketService {
 
   Box get _box => Hive.box('marketCache');
 
-  Future<PriceSnapshot?> fetchOneYearPrices(String symbol, {bool forceRefresh = false}) async {
+  Future<PriceSnapshot?> fetchOneYearPrices(
+    String symbol, {
+    bool forceRefresh = false,
+  }) async {
     final cached = _box.get(symbol);
     if (cached is Map && !forceRefresh) {
-      final ts = DateTime.tryParse(cached['updated'] as String? ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
+      final ts =
+          DateTime.tryParse(cached['updated'] as String? ?? '') ??
+          DateTime.fromMillisecondsSinceEpoch(0);
       if (DateTime.now().difference(ts).inDays < _cacheTtlDays) {
         final closes = (cached['closes'] as List?)?.cast<num?>();
         if (closes != null && closes.isNotEmpty) {
@@ -31,7 +36,9 @@ class MarketService {
     }
 
     // Yahoo Finance chart API (unofficial). Works for mobile; CORS may block on web.
-    final url = Uri.parse('https://query1.finance.yahoo.com/v8/finance/chart/$symbol?range=1y&interval=1d');
+    final url = Uri.parse(
+      'https://query1.finance.yahoo.com/v8/finance/chart/$symbol?range=1y&interval=1d',
+    );
     final resp = await http.get(url);
     if (resp.statusCode != 200) return null;
     final data = jsonDecode(resp.body) as Map<String, dynamic>;
@@ -40,7 +47,9 @@ class MarketService {
     final root = result[0] as Map<String, dynamic>;
     final indicators = root['indicators'] as Map<String, dynamic>?;
     final quoteList = indicators?['quote'] as List?;
-    final firstQuote = (quoteList != null && quoteList.isNotEmpty) ? quoteList[0] as Map<String, dynamic> : null;
+    final firstQuote = (quoteList != null && quoteList.isNotEmpty)
+        ? quoteList[0] as Map<String, dynamic>
+        : null;
     final closesRaw = firstQuote?['close'] as List?;
     if (closesRaw == null) return null;
 

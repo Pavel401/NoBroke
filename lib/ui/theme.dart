@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'colors.dart';
 
 class ThemeProvider extends ChangeNotifier {
@@ -36,25 +37,38 @@ class ThemeProvider extends ChangeNotifier {
     return isDarkMode ? darkTheme : lightTheme;
   }
 
-  // Light Theme
+  // Light Theme with enhanced colors and animations
   final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     textTheme: textTheme,
     colorScheme: const ColorScheme.light(
       primary: TurfitColors.primaryLight,
       secondary: TurfitColors.secondaryLight,
+      tertiary: TurfitColors.tertiaryLight,
       onPrimary: TurfitColors.onPrimaryLight,
       surface: TurfitColors.surfaceLight,
       onSurface: TurfitColors.onSurfaceLight,
       outline: TurfitColors.outlineLight,
+      error: TurfitColors.errorLight,
     ),
     scaffoldBackgroundColor: TurfitColors.surfaceLight,
-    appBarTheme: const AppBarTheme(backgroundColor: TurfitColors.surfaceLight),
+    appBarTheme: AppBarTheme(
+      backgroundColor: TurfitColors.surfaceLight,
+      foregroundColor: TurfitColors.onSurfaceLight,
+      elevation: 0,
+      centerTitle: true,
+      titleTextStyle: GoogleFonts.nunito(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        color: TurfitColors.onSurfaceLight,
+      ),
+    ),
     cardTheme: CardThemeData(
-      color: TurfitColors.surfaceLight,
+      color: TurfitColors.cardLight,
       surfaceTintColor: TurfitColors.primaryLight,
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      shadowColor: TurfitColors.primaryLight.withOpacity(0.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     ),
     dialogTheme: DialogThemeData(
@@ -83,11 +97,21 @@ class ThemeProvider extends ChangeNotifier {
           return TurfitColors.primaryLight;
         }),
         foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
-          if (states.contains(WidgetState.disabled)) {
-            return TurfitColors.surfaceLight;
-          }
-          return TurfitColors.surfaceLight;
+          return TurfitColors.onPrimaryLight;
         }),
+        textStyle: WidgetStateProperty.all(
+          GoogleFonts.nunito(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+        elevation: WidgetStateProperty.all(4),
+        shadowColor: WidgetStateProperty.all(
+          TurfitColors.primaryLight.withOpacity(0.3),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        padding: WidgetStateProperty.all(
+          const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        ),
       ),
     ),
     listTileTheme: ListTileThemeData(
@@ -96,27 +120,63 @@ class ThemeProvider extends ChangeNotifier {
       ),
       iconColor: TurfitColors.onPrimaryLight,
     ),
+    // Enhanced Bottom Navigation Bar for kids
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      selectedItemColor: TurfitColors.primaryLight,
+      unselectedItemColor: Colors.grey[500],
+      selectedLabelStyle: GoogleFonts.nunito(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+      ),
+      unselectedLabelStyle: GoogleFonts.nunito(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+      ),
+      type: BottomNavigationBarType.fixed,
+    ),
+    // Enhanced FloatingActionButton
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: TurfitColors.accentLight,
+      foregroundColor: Colors.white,
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
   );
 
-  // Dark Theme
+  // Dark Theme with enhanced colors and animations
   final ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     textTheme: textTheme,
     colorScheme: const ColorScheme.dark(
       primary: TurfitColors.primaryDark,
       secondary: TurfitColors.secondaryDark,
+      tertiary: TurfitColors.tertiaryDark,
       onPrimary: TurfitColors.onPrimaryDark,
       surface: TurfitColors.surfaceDark,
       onSurface: TurfitColors.onSurfaceDark,
       outline: TurfitColors.outlineDark,
+      error: TurfitColors.errorDark,
     ),
     scaffoldBackgroundColor: TurfitColors.surfaceDark,
-    appBarTheme: const AppBarTheme(backgroundColor: TurfitColors.surfaceDark),
+    appBarTheme: AppBarTheme(
+      backgroundColor: TurfitColors.surfaceDark,
+      foregroundColor: TurfitColors.onSurfaceDark,
+      elevation: 0,
+      centerTitle: true,
+      titleTextStyle: GoogleFonts.nunito(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        color: TurfitColors.onSurfaceDark,
+      ),
+    ),
     cardTheme: CardThemeData(
-      color: TurfitColors.surfaceDark,
+      color: TurfitColors.cardDark,
       surfaceTintColor: TurfitColors.primaryDark,
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 4,
+      shadowColor: TurfitColors.primaryDark.withOpacity(0.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     ),
     dialogTheme: DialogThemeData(
@@ -145,11 +205,21 @@ class ThemeProvider extends ChangeNotifier {
           return TurfitColors.primaryDark;
         }),
         foregroundColor: WidgetStateProperty.resolveWith<Color>((states) {
-          if (states.contains(WidgetState.disabled)) {
-            return TurfitColors.surfaceDark;
-          }
-          return TurfitColors.surfaceDark;
+          return TurfitColors.onPrimaryDark;
         }),
+        textStyle: WidgetStateProperty.all(
+          GoogleFonts.nunito(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+        elevation: WidgetStateProperty.all(4),
+        shadowColor: WidgetStateProperty.all(
+          TurfitColors.primaryDark.withOpacity(0.3),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        padding: WidgetStateProperty.all(
+          const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        ),
       ),
     ),
     listTileTheme: ListTileThemeData(
@@ -158,99 +228,107 @@ class ThemeProvider extends ChangeNotifier {
       ),
       iconColor: TurfitColors.onPrimaryDark,
     ),
+    // Enhanced Bottom Navigation Bar for kids (Dark mode)
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      selectedItemColor: TurfitColors.primaryDark,
+      unselectedItemColor: Colors.grey[400],
+      selectedLabelStyle: GoogleFonts.nunito(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+      ),
+      unselectedLabelStyle: GoogleFonts.nunito(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+      ),
+      type: BottomNavigationBarType.fixed,
+    ),
+    // Enhanced FloatingActionButton (Dark mode)
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: TurfitColors.accentDark,
+      foregroundColor: TurfitColors.onPrimaryDark,
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    ),
   );
 }
 
-// TextTheme
-const TextTheme textTheme = TextTheme(
-  displayLarge: TextStyle(
-    fontFamily: 'Roboto',
+// Enhanced TextTheme with Nunito font for kid-friendly appeal
+final TextTheme textTheme = TextTheme(
+  displayLarge: GoogleFonts.nunito(
     fontSize: 57,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w800,
     letterSpacing: -0.25,
   ),
-  displayMedium: TextStyle(
-    fontFamily: 'Roboto',
+  displayMedium: GoogleFonts.nunito(
     fontSize: 45,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w700,
     letterSpacing: 0,
   ),
-  displaySmall: TextStyle(
-    fontFamily: 'Roboto',
+  displaySmall: GoogleFonts.nunito(
     fontSize: 36,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w700,
     letterSpacing: 0,
   ),
-  headlineLarge: TextStyle(
-    fontFamily: 'Roboto',
+  headlineLarge: GoogleFonts.nunito(
     fontSize: 32,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w700,
     letterSpacing: 0,
   ),
-  headlineMedium: TextStyle(
-    fontFamily: 'Roboto',
+  headlineMedium: GoogleFonts.nunito(
     fontSize: 28,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w600,
     letterSpacing: 0,
   ),
-  headlineSmall: TextStyle(
-    fontFamily: 'Roboto',
+  headlineSmall: GoogleFonts.nunito(
     fontSize: 24,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w600,
     letterSpacing: 0,
   ),
-  titleLarge: TextStyle(
-    fontFamily: 'Roboto',
+  titleLarge: GoogleFonts.nunito(
     fontSize: 22,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w700,
     letterSpacing: 0,
   ),
-  titleMedium: TextStyle(
-    fontFamily: 'Roboto',
+  titleMedium: GoogleFonts.nunito(
     fontSize: 16,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     letterSpacing: 0.15,
   ),
-  titleSmall: TextStyle(
-    fontFamily: 'Roboto',
+  titleSmall: GoogleFonts.nunito(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     letterSpacing: 0.1,
   ),
-  labelLarge: TextStyle(
-    fontFamily: 'Roboto',
+  labelLarge: GoogleFonts.nunito(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     letterSpacing: 0.1,
   ),
-  labelMedium: TextStyle(
-    fontFamily: 'Roboto',
+  labelMedium: GoogleFonts.nunito(
     fontSize: 12,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     letterSpacing: 0.5,
   ),
-  labelSmall: TextStyle(
-    fontFamily: 'Roboto',
+  labelSmall: GoogleFonts.nunito(
     fontSize: 11,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     letterSpacing: 0.4,
   ),
-  bodyLarge: TextStyle(
-    fontFamily: 'Roboto',
+  bodyLarge: GoogleFonts.nunito(
     fontSize: 16,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w500,
     letterSpacing: 0.5,
   ),
-  bodyMedium: TextStyle(
-    fontFamily: 'Roboto',
+  bodyMedium: GoogleFonts.nunito(
     fontSize: 14,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w500,
     letterSpacing: 0.25,
   ),
-  bodySmall: TextStyle(
-    fontFamily: 'Roboto',
+  bodySmall: GoogleFonts.nunito(
     fontSize: 12,
-    fontWeight: FontWeight.normal,
+    fontWeight: FontWeight.w500,
     letterSpacing: 0.4,
   ),
 );

@@ -22,7 +22,8 @@ class _ResultScreenState extends State<ResultScreen> {
   void initState() {
     super.initState();
     market = Get.put(MarketController(MarketService()));
-    final symbol = Get.find<SelectionController>().selectedInvestmentSymbol.value;
+    final symbol =
+        Get.find<SelectionController>().selectedInvestmentSymbol.value;
     if (symbol.isNotEmpty) {
       market.loadOneYearReturn(symbol);
     }
@@ -40,7 +41,9 @@ class _ResultScreenState extends State<ResultScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (market.error.value != null) {
-            return const Center(child: Text('Could not load data. Try again later.'));
+            return const Center(
+              child: Text('Could not load data. Try again later.'),
+            );
           }
           final res = market.result.value;
           if (res == null || res.startPrice == 0 || res.latestPrice == 0) {
@@ -48,7 +51,9 @@ class _ResultScreenState extends State<ResultScreen> {
           }
 
           final amount = selection.enteredPrice.value;
-          final growthRatio = (res.startPrice > 0) ? (res.latestPrice / res.startPrice) : 0.0;
+          final growthRatio = (res.startPrice > 0)
+              ? (res.latestPrice / res.startPrice)
+              : 0.0;
           final grown = amount * growthRatio;
           final returnPct = (growthRatio - 1) * 100;
           final pctText = returnPct.toStringAsFixed(0);
@@ -72,16 +77,34 @@ class _ResultScreenState extends State<ResultScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_money(grown), style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold)),
+                    Text(
+                      _money(grown),
+                      style: TextStyle(
+                        fontSize: 22.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     SizedBox(height: 1.h),
-                    Text('$sign$pctText%', style: TextStyle(fontSize: 14.sp, color: returnPct >= 0 ? Colors.green : Colors.red)),
+                    Text(
+                      '$sign$pctText%',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: returnPct >= 0 ? Colors.green : Colors.red,
+                      ),
+                    ),
                   ],
                 ),
               ),
               SizedBox(height: 2.h),
-              Text('💡 Past performance is not an indicator of future results.', style: TextStyle(fontSize: 10.sp)),
+              Text(
+                '💡 Past performance is not an indicator of future results.',
+                style: TextStyle(fontSize: 10.sp),
+              ),
               SizedBox(height: 1.h),
-              Text('Fun fact: Teens who invest early benefit from the power of compounding.', style: TextStyle(fontSize: 10.sp)),
+              Text(
+                'Fun fact: Teens who invest early benefit from the power of compounding.',
+                style: TextStyle(fontSize: 10.sp),
+              ),
               SizedBox(height: 4.h),
               Row(
                 children: [
@@ -96,17 +119,22 @@ class _ResultScreenState extends State<ResultScreen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         final db = Get.find<AppDb>();
-                        await db.addSaving(SavingsCompanion.insert(
-                          itemName: selection.selectedItemName.value,
-                          amount: amount,
-                          symbol: selection.selectedInvestmentSymbol.value,
-                          investmentName: selection.selectedInvestmentName.value,
-                          finalValue: grown,
-                          returnPct: returnPct,
-                          itemIconName: d.Value(selection.selectedItemIconName.value.isEmpty
-                              ? null
-                              : selection.selectedItemIconName.value),
-                        ));
+                        await db.addSaving(
+                          SavingsCompanion.insert(
+                            itemName: selection.selectedItemName.value,
+                            amount: amount,
+                            symbol: selection.selectedInvestmentSymbol.value,
+                            investmentName:
+                                selection.selectedInvestmentName.value,
+                            finalValue: grown,
+                            returnPct: returnPct,
+                            itemIconName: d.Value(
+                              selection.selectedItemIconName.value.isEmpty
+                                  ? null
+                                  : selection.selectedItemIconName.value,
+                            ),
+                          ),
+                        );
                         Get.snackbar('Saved', 'Added to your savings');
                         Get.offAllNamed('/tabs');
                       },
@@ -114,7 +142,7 @@ class _ResultScreenState extends State<ResultScreen> {
                     ),
                   ),
                 ],
-              )
+              ),
             ],
           );
         }),

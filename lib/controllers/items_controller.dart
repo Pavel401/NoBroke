@@ -33,11 +33,13 @@ class ItemsController extends GetxController {
     final q = query.value.trim().toLowerCase();
     final cat = selectedCategory.value.trim();
     return items.where((it) {
-      final matchQ = q.isEmpty || it.name.toLowerCase().contains(q) || (it.description ?? '').toLowerCase().contains(q);
+      final matchQ =
+          q.isEmpty ||
+          it.name.toLowerCase().contains(q) ||
+          (it.description ?? '').toLowerCase().contains(q);
       final matchC = cat.isEmpty || it.category == cat;
       return matchQ && matchC;
-    }).toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
+    }).toList()..sort((a, b) => a.name.compareTo(b.name));
   }
 
   Future<void> addItem({

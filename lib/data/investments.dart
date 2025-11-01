@@ -3,7 +3,11 @@ class Investment {
   final String symbol;
   final String emoji; // optional flair
 
-  const Investment({required this.name, required this.symbol, required this.emoji});
+  const Investment({
+    required this.name,
+    required this.symbol,
+    required this.emoji,
+  });
 }
 
 const investments = <Investment>[
@@ -23,4 +27,3 @@ const investments = <Investment>[
   Investment(name: 'QQQ (Nasdaq 100)', symbol: 'QQQ', emoji: '💹'),
   Investment(name: 'Bitcoin', symbol: 'BTC-USD', emoji: '₿'),
 ];
-

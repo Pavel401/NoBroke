@@ -7,7 +7,11 @@ class MarketResult {
   final double latestPrice;
   final double percentChange; // e.g., 0.32 for +32%
 
-  MarketResult({required this.startPrice, required this.latestPrice, required this.percentChange});
+  MarketResult({
+    required this.startPrice,
+    required this.latestPrice,
+    required this.percentChange,
+  });
 }
 
 class MarketController extends GetxController {
@@ -30,7 +34,11 @@ class MarketController extends GetxController {
       final start = data.start!;
       final latest = data.latest!;
       final pct = (latest - start) / start;
-      result.value = MarketResult(startPrice: start, latestPrice: latest, percentChange: pct);
+      result.value = MarketResult(
+        startPrice: start,
+        latestPrice: latest,
+        percentChange: pct,
+      );
     } catch (e) {
       error.value = 'Failed to load data';
     } finally {
@@ -38,4 +46,3 @@ class MarketController extends GetxController {
     }
   }
 }
-

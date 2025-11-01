@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'animated_icons.dart';
 
 IconData iconFromName(String? name) {
+  // Use the new enhanced icons first
+  final enhancedIcon = KidFriendlyIcons.getIcon(name);
+  if (enhancedIcon != Icons.star) {
+    return enhancedIcon;
+  }
+
+  // Fallback to original Material icons
   if (name == null || name.isEmpty) return Icons.category;
   switch (name) {
     case 'food':

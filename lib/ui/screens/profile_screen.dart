@@ -26,7 +26,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _load() async {
-    final db = Get.isRegistered<AppDb>() ? Get.find<AppDb>() : Get.put(AppDb(), permanent: true);
+    final db = Get.isRegistered<AppDb>()
+        ? Get.find<AppDb>()
+        : Get.put(AppDb(), permanent: true);
     final p = await db.getProfile();
     if (p != null) {
       _nameCtrl.text = p.name ?? '';
@@ -58,12 +60,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final db = Get.find<AppDb>();
     final name = _nameCtrl.text.trim();
     final img = _imageCtrl.text.trim();
-    await db.upsertProfile(ProfilesCompanion(
-      id: const d.Value(1),
-      name: d.Value<String?>(name.isEmpty ? null : name),
-      imagePath: d.Value<String?>(img.isEmpty ? null : img),
-      dob: d.Value<DateTime?>(_dob),
-    ));
+    await db.upsertProfile(
+      ProfilesCompanion(
+        id: const d.Value(1),
+        name: d.Value<String?>(name.isEmpty ? null : name),
+        imagePath: d.Value<String?>(img.isEmpty ? null : img),
+        dob: d.Value<DateTime?>(_dob),
+      ),
+    );
     Get.snackbar('Saved', 'Profile updated');
     if (mounted) Navigator.of(context).pop();
   }
@@ -104,7 +108,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    _dob == null ? 'DOB: Not set' : 'DOB: ${DateFormat('yMMMd').format(_dob!)}',
+                    _dob == null
+                        ? 'DOB: Not set'
+                        : 'DOB: ${DateFormat('yMMMd').format(_dob!)}',
                   ),
                 ),
                 TextButton(onPressed: _pickDob, child: const Text('Pick DOB')),
@@ -113,7 +119,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 3.h),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(onPressed: _save, child: const Text('Save')),
+              child: ElevatedButton(
+                onPressed: _save,
+                child: const Text('Save'),
+              ),
             ),
           ],
         ),
@@ -123,14 +132,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _avatarPreview(String path, String name) {
     final initials = (name.isNotEmpty)
-        ? name.trim().split(RegExp(r"\s+")).map((e) => e.isNotEmpty ? e[0] : '').take(2).join().toUpperCase()
+        ? name
+              .trim()
+              .split(RegExp(r"\s+"))
+              .map((e) => e.isNotEmpty ? e[0] : '')
+              .take(2)
+              .join()
+              .toUpperCase()
         : '?';
     return CircleAvatar(
       radius: 28,
       backgroundColor: Colors.grey.shade300,
       backgroundImage: path.startsWith('http') ? NetworkImage(path) : null,
-      child: path.startsWith('http') ? null : Text(initials, style: const TextStyle(fontWeight: FontWeight.bold)),
+      child: path.startsWith('http')
+          ? null
+          : Text(initials, style: const TextStyle(fontWeight: FontWeight.bold)),
     );
   }
 }
-

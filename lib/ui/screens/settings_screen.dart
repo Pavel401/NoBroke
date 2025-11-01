@@ -142,7 +142,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SizedBox(height: 1.h),
                   TapTile(
                     title: 'Sync Market Data',
-                    subtitle: 'Pull and cache 1-year prices for all investments',
+                    subtitle:
+                        'Pull and cache 1-year prices for all investments',
                     leadingIcon: Icons.sync_outlined,
                     trailing: _syncing
                         ? SizedBox(
@@ -172,14 +173,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     leadingIcon: Icons.info_outline,
                     trailing: Text(
                       _appVersion.isEmpty ? '-' : _appVersion,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withOpacity(0.7)),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.7),
+                      ),
                     ),
                     onTap: null,
                   ),

@@ -36,7 +36,9 @@ class TapTile extends StatelessWidget {
                   height: 40,
                   width: 40,
                   decoration: BoxDecoration(
-                    color: leadingBg ?? theme.colorScheme.secondary.withOpacity(0.15),
+                    color:
+                        leadingBg ??
+                        theme.colorScheme.secondary.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(leadingIcon, color: theme.colorScheme.primary),
@@ -70,7 +72,10 @@ class TapTile extends StatelessWidget {
                 trailing!,
               ] else ...[
                 const SizedBox(width: 8),
-                Icon(Icons.chevron_right_rounded, color: onSurface.withOpacity(0.5)),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: onSurface.withOpacity(0.5),
+                ),
               ],
             ],
           ),
