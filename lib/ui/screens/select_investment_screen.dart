@@ -160,86 +160,97 @@ class SelectInvestmentScreen extends StatelessWidget {
                       selection.pickInvestment(inv.symbol, inv.name, inv.emoji);
                       Get.toNamed(Routes.result);
                     },
-                    child: Container(
-                      padding: EdgeInsets.all(3.w),
-                      decoration: BoxDecoration(
-                        color: TurfitColors.white(context),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: TurfitColors.grey200(context),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: TurfitColors.primaryLight.withOpacity(0.04),
-                            offset: const Offset(0, 2),
-                            blurRadius: 6,
-                            spreadRadius: 0,
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          // Investment Icon
-                          Container(
-                            padding: EdgeInsets.all(2.w),
-                            decoration: BoxDecoration(
-                              color: TurfitColors.grey100(context),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              inv.emoji,
-                              style: TextStyle(fontSize: 14.sp),
-                            ),
-                          ),
-                          SizedBox(width: 3.w),
-                          
-                          // Investment Info
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  inv.name,
-                                  style: GoogleFonts.nunito(
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: colorScheme.onSurface,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                    child:
+                        Container(
+                              padding: EdgeInsets.all(3.w),
+                              decoration: BoxDecoration(
+                                color: TurfitColors.white(context),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: TurfitColors.grey200(context),
+                                  width: 1,
                                 ),
-                                SizedBox(height: 0.2.h),
-                                Text(
-                                  inv.symbol,
-                                  style: GoogleFonts.nunito(
-                                    fontSize: 10.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: TurfitColors.grey600(context),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: TurfitColors.primaryLight
+                                        .withOpacity(0.04),
+                                    offset: const Offset(0, 2),
+                                    blurRadius: 6,
+                                    spreadRadius: 0,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          
-                          // Arrow Icon
-                          Container(
-                            padding: EdgeInsets.all(1.5.w),
-                            decoration: BoxDecoration(
-                              color: TurfitColors.primaryLight.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              size: 12.sp,
-                              color: TurfitColors.primaryLight,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ).animate(delay: Duration(milliseconds: 600 + (index * 100)))
-                        .fadeIn(duration: 400.ms)
-                        .slideX(begin: 0.3),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  // Investment Icon
+                                  Container(
+                                    padding: EdgeInsets.all(2.w),
+                                    decoration: BoxDecoration(
+                                      color: TurfitColors.grey100(context),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      inv.emoji,
+                                      style: TextStyle(fontSize: 14.sp),
+                                    ),
+                                  ),
+                                  SizedBox(width: 3.w),
+
+                                  // Investment Info
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          inv.name,
+                                          style: GoogleFonts.nunito(
+                                            fontSize: 13.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color: colorScheme.onSurface,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        SizedBox(height: 0.2.h),
+                                        Text(
+                                          inv.symbol,
+                                          style: GoogleFonts.nunito(
+                                            fontSize: 10.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: TurfitColors.grey600(
+                                              context,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // Arrow Icon
+                                  Container(
+                                    padding: EdgeInsets.all(1.5.w),
+                                    decoration: BoxDecoration(
+                                      color: TurfitColors.primaryLight
+                                          .withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      size: 12.sp,
+                                      color: TurfitColors.primaryLight,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                            .animate(
+                              delay: Duration(
+                                milliseconds: 600 + (index * 100),
+                              ),
+                            )
+                            .fadeIn(duration: 400.ms)
+                            .slideX(begin: 0.3),
                   );
                 },
                 separatorBuilder: (_, __) => SizedBox(height: 1.2.h),

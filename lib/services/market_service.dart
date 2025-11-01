@@ -57,10 +57,14 @@ class MarketService {
     final first = _firstNonNull(closes)?.toDouble();
     final last = _lastNonNull(closes)?.toDouble();
 
+    // print("The Updated Prices for $symbol are: $closes");
+
     await _box.put(symbol, {
       'updated': DateTime.now().toIso8601String(),
       'closes': closes,
     });
+
+    print("The Updated Prices for $symbol are: $first to $last");
 
     return PriceSnapshot(start: first, latest: last);
   }
