@@ -122,10 +122,10 @@ class ThemeProvider extends ChangeNotifier {
     ),
     // Enhanced Bottom Navigation Bar for kids
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: Colors.transparent,
+      backgroundColor: TurfitColors.transparentLight,
       elevation: 0,
       selectedItemColor: TurfitColors.primaryLight,
-      unselectedItemColor: Colors.grey[500],
+      unselectedItemColor: TurfitColors.grey500Light,
       selectedLabelStyle: GoogleFonts.nunito(
         fontSize: 12,
         fontWeight: FontWeight.w700,
@@ -139,7 +139,7 @@ class ThemeProvider extends ChangeNotifier {
     // Enhanced FloatingActionButton
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: TurfitColors.accentLight,
-      foregroundColor: Colors.white,
+      foregroundColor: TurfitColors.whiteLight,
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
@@ -230,10 +230,10 @@ class ThemeProvider extends ChangeNotifier {
     ),
     // Enhanced Bottom Navigation Bar for kids (Dark mode)
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: Colors.transparent,
+      backgroundColor: TurfitColors.transparentDark,
       elevation: 0,
       selectedItemColor: TurfitColors.primaryDark,
-      unselectedItemColor: Colors.grey[400],
+      unselectedItemColor: TurfitColors.grey400Dark,
       selectedLabelStyle: GoogleFonts.nunito(
         fontSize: 12,
         fontWeight: FontWeight.w700,

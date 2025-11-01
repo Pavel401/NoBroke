@@ -120,21 +120,25 @@ class _KidFriendlyNavBarState extends State<KidFriendlyNavBar>
             : (isLandscape ? 1.h : 1.5.h), // Less vertical margin for phones
       ),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFFFFFFF), Color(0xFFF8F6FF)],
+          colors: Theme.of(context).brightness == Brightness.dark
+              ? [TurfitColors.cardDark, TurfitColors.surfaceDark]
+              : [const Color(0xFFFFFFFF), const Color(0xFFF8F6FF)],
         ),
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: TurfitColors.primaryLight.withValues(alpha: 0.15),
+            color: TurfitColors.primary(context).withValues(alpha: 0.15),
             offset: const Offset(0, 6),
             blurRadius: 20,
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.black.withValues(alpha: 0.05),
             offset: const Offset(0, 2),
             blurRadius: 8,
             spreadRadius: 0,
@@ -213,8 +217,12 @@ class _KidFriendlyNavBarState extends State<KidFriendlyNavBar>
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  destination.selectedColor.withOpacity(0.2),
-                                  destination.selectedColor.withOpacity(0.1),
+                                  destination.selectedColor.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                  destination.selectedColor.withValues(
+                                    alpha: 0.1,
+                                  ),
                                 ],
                               )
                             : null,
@@ -223,8 +231,8 @@ class _KidFriendlyNavBarState extends State<KidFriendlyNavBar>
                         ), // Bigger border radius for tablets
                         border: isSelected
                             ? Border.all(
-                                color: destination.selectedColor.withOpacity(
-                                  0.3 + (pulseValue * 0.4),
+                                color: destination.selectedColor.withValues(
+                                  alpha: 0.3 + (pulseValue * 0.4),
                                 ),
                                 width: isTablet
                                     ? 3
@@ -254,8 +262,8 @@ class _KidFriendlyNavBarState extends State<KidFriendlyNavBar>
                                         ? 12
                                         : 6, // Bigger for tablets, smaller for phones
                                     height: isTablet ? 12 : 6,
-                                    decoration: const BoxDecoration(
-                                      color: TurfitColors.secondaryLight,
+                                    decoration: BoxDecoration(
+                                      color: TurfitColors.secondary(context),
                                       shape: BoxShape.circle,
                                     ),
                                   )
@@ -307,7 +315,7 @@ class _KidFriendlyNavBarState extends State<KidFriendlyNavBar>
                               : FontWeight.w600,
                           color: isSelected
                               ? destination.selectedColor
-                              : Colors.grey[600],
+                              : TurfitColors.grey600(context),
                         ),
                         child: Text(
                           destination.label,

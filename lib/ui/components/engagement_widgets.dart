@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,25 +37,22 @@ class StreakBadge extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('🔥', style: TextStyle(fontSize: 12.sp)),
-              SizedBox(width: 1.w),
+              Lottie.asset(
+                'assets/lotties/streak.json',
+                width: 16.sp,
+                height: 16.sp,
+                fit: BoxFit.contain,
+                repeat: true,
+              ),
               Text(
                 '$streakCount',
                 style: GoogleFonts.nunito(
-                  fontSize: 12.sp,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: TurfitColors.white(context),
                 ),
               ),
               SizedBox(width: 1.w),
-              Text(
-                label,
-                style: GoogleFonts.nunito(
-                  fontSize: 8.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
             ],
           ),
         )
@@ -64,7 +62,7 @@ class StreakBadge extends StatelessWidget {
         .shimmer(
           delay: 1000.ms,
           duration: 1500.ms,
-          color: Colors.white.withOpacity(0.3),
+          color: TurfitColors.white(context).withOpacity(0.3),
         );
   }
 }
@@ -90,10 +88,12 @@ class AchievementBadge extends StatelessWidget {
           decoration: BoxDecoration(
             color: isUnlocked
                 ? TurfitColors.accentLight.withOpacity(0.1)
-                : Colors.grey[200],
+                : TurfitColors.grey200(context),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isUnlocked ? TurfitColors.accentLight : Colors.grey[300]!,
+              color: isUnlocked
+                  ? TurfitColors.accentLight
+                  : TurfitColors.grey300(context),
               width: 2,
             ),
           ),
@@ -103,7 +103,7 @@ class AchievementBadge extends StatelessWidget {
                 emoji,
                 style: TextStyle(
                   fontSize: 24.sp,
-                  color: isUnlocked ? null : Colors.grey[400],
+                  color: isUnlocked ? null : TurfitColors.grey400(context),
                 ),
               ),
               SizedBox(height: 1.h),
@@ -114,7 +114,7 @@ class AchievementBadge extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   color: isUnlocked
                       ? TurfitColors.onSurfaceLight
-                      : Colors.grey[500],
+                      : TurfitColors.grey500(context),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -124,7 +124,9 @@ class AchievementBadge extends StatelessWidget {
                 style: GoogleFonts.nunito(
                   fontSize: 9.sp,
                   fontWeight: FontWeight.w500,
-                  color: isUnlocked ? Colors.grey[600] : Colors.grey[400],
+                  color: isUnlocked
+                      ? TurfitColors.grey600(context)
+                      : TurfitColors.grey400(context),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,

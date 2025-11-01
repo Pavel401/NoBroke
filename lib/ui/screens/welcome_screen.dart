@@ -40,7 +40,7 @@ class WelcomeScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                        color: TurfitColors.white(context),
                       ),
                     )
                     .animate()
@@ -57,7 +57,7 @@ class WelcomeScreen extends StatelessWidget {
                       textStyle: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white.withOpacity(0.9),
+                        color: TurfitColors.white(context).withOpacity(0.9),
                       ),
                       speed: const Duration(milliseconds: 100),
                     ),
@@ -71,10 +71,10 @@ class WelcomeScreen extends StatelessWidget {
                 Container(
                       padding: EdgeInsets.all(4.w),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
+                        color: TurfitColors.white(context).withOpacity(0.15),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
+                          color: TurfitColors.white(context).withOpacity(0.3),
                           width: 1,
                         ),
                       ),
@@ -84,7 +84,7 @@ class WelcomeScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w600,
-                          color: Colors.white,
+                          color: TurfitColors.white(context),
                         ),
                       ),
                     )
@@ -114,8 +114,8 @@ class WelcomeScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () => Get.toNamed(Routes.selectItem),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          shadowColor: Colors.transparent,
+                          backgroundColor: TurfitColors.transparent(context),
+                          shadowColor: TurfitColors.transparent(context),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -152,7 +152,7 @@ class WelcomeScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white.withOpacity(0.8),
+                      color: TurfitColors.white(context).withOpacity(0.8),
                     ),
                   ),
                 ).animate().fadeIn(delay: 3000.ms),

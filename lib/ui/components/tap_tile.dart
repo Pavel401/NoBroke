@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:sizer/sizer.dart';
 
 class TapTile extends StatelessWidget {
   final String title;
@@ -33,8 +34,8 @@ class TapTile extends StatelessWidget {
             children: [
               if (leadingIcon != null)
                 Container(
-                  height: 40,
-                  width: 40,
+                  height: 10.w,
+                  width: 10.w,
                   decoration: BoxDecoration(
                     color:
                         leadingBg ??
@@ -56,7 +57,6 @@ class TapTile extends StatelessWidget {
                       ),
                     ),
                     if (subtitle != null && subtitle!.isNotEmpty) ...[
-                      const SizedBox(height: 4),
                       Text(
                         subtitle!,
                         style: theme.textTheme.bodyMedium?.copyWith(

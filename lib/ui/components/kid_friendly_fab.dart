@@ -98,7 +98,7 @@ class _KidFriendlyFABState extends State<KidFriendlyFAB>
                   ),
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(
-                    color: Colors.white.withOpacity(0.3),
+                    color: TurfitColors.white(context).withOpacity(0.3),
                     width: 2,
                   ),
                 ),
@@ -112,7 +112,7 @@ class _KidFriendlyFABState extends State<KidFriendlyFAB>
                       style: GoogleFonts.nunito(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w700,
-                        color: Colors.white,
+                        color: TurfitColors.white(context),
                       ),
                     ),
                   ],

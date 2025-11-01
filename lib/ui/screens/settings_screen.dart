@@ -78,114 +78,99 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Get.find<ThemeProvider>();
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       // Let the Scaffold adjust for the keyboard to avoid overflow
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: const Text('Settings')),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-          return SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            padding: EdgeInsets.fromLTRB(6.w, 6.w, 6.w, 6.w + bottomInset),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Appearance',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
+      backgroundColor: colorScheme.surface,
+
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+            return SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.fromLTRB(6.w, 6.w, 6.w, 6.w + bottomInset),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 1.h),
+                    AnimatedBuilder(
+                      animation: themeProvider,
+                      builder: (context, _) => TapTile(
+                        title: 'Dark Mode',
+                        subtitle: 'Reduce eye strain with a darker theme',
+                        leadingIcon: Icons.dark_mode_outlined,
+                        trailing: Switch.adaptive(
+                          value: themeProvider.isDarkMode,
+                          onChanged: (_) => themeProvider.toggleTheme(),
+                        ),
+                        onTap: null,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 1.h),
-                  AnimatedBuilder(
-                    animation: themeProvider,
-                    builder: (context, _) => TapTile(
-                      title: 'Dark Mode',
-                      subtitle: 'Reduce eye strain with a darker theme',
-                      leadingIcon: Icons.dark_mode_outlined,
-                      trailing: Switch.adaptive(
-                        value: themeProvider.isDarkMode,
-                        onChanged: (_) => themeProvider.toggleTheme(),
+                    SizedBox(height: 2.h),
+
+                    TapTile(
+                      title: 'Profile',
+                      subtitle: 'Set your name, image, and date of birth',
+                      leadingIcon: Icons.person_outline,
+                      onTap: () async {
+                        await Get.to(() => ProfileScreen());
+                        setState(() {});
+                      },
+                    ),
+                    SizedBox(height: 2.h),
+
+                    TapTile(
+                      title: 'Sync Market Data',
+                      subtitle:
+                          'Pull and cache 1-year prices for all investments',
+                      leadingIcon: Icons.sync_outlined,
+                      trailing: _syncing
+                          ? SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: colorScheme.primary,
+                              ),
+                            )
+                          : null,
+                      onTap: _syncing ? null : _sync,
+                    ),
+
+                    if (_syncing) ...[
+                      SizedBox(height: 2.h),
+                      LinearProgressIndicator(
+                        value: _progress,
+                        color: colorScheme.primary,
+                        backgroundColor: colorScheme.primary.withOpacity(0.2),
+                      ),
+                    ],
+
+                    SizedBox(height: 2.h),
+                    TapTile(
+                      title: 'App Version',
+                      subtitle: 'Build and version information',
+                      leadingIcon: Icons.info_outline,
+                      trailing: Text(
+                        _appVersion.isEmpty ? '-' : _appVersion,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurface.withOpacity(0.7),
+                        ),
                       ),
                       onTap: null,
                     ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    'Account',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 1.h),
-                  TapTile(
-                    title: 'Profile',
-                    subtitle: 'Set your name, image, and date of birth',
-                    leadingIcon: Icons.person_outline,
-                    onTap: () async {
-                      await Get.to(() => ProfileScreen());
-                      setState(() {});
-                    },
-                  ),
-                  Text(
-                    'Market Data',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 1.h),
-                  TapTile(
-                    title: 'Sync Market Data',
-                    subtitle:
-                        'Pull and cache 1-year prices for all investments',
-                    leadingIcon: Icons.sync_outlined,
-                    trailing: _syncing
-                        ? SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : null,
-                    onTap: _syncing ? null : _sync,
-                  ),
-                  if (_syncing) ...[
-                    SizedBox(height: 2.h),
-                    LinearProgressIndicator(value: _progress),
                   ],
-                  SizedBox(height: 2.h),
-                  Text(
-                    'About',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 1.h),
-                  TapTile(
-                    title: 'App Version',
-                    subtitle: 'Build and version information',
-                    leadingIcon: Icons.info_outline,
-                    trailing: Text(
-                      _appVersion.isEmpty ? '-' : _appVersion,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withOpacity(0.7),
-                      ),
-                    ),
-                    onTap: null,
-                  ),
-                ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

@@ -105,7 +105,7 @@ class KidFriendlyAppBar extends StatelessWidget implements PreferredSizeWidget {
                 style: GoogleFonts.nunito(
                   fontSize: titleSize,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: TurfitColors.whiteLight,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -117,7 +117,7 @@ class KidFriendlyAppBar extends StatelessWidget implements PreferredSizeWidget {
                       style: GoogleFonts.nunito(
                         fontSize: subtitleSize,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: TurfitColors.whiteLight.withValues(alpha: 0.9),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -164,7 +164,7 @@ class KidFriendlyAppBar extends StatelessWidget implements PreferredSizeWidget {
                 style: GoogleFonts.nunito(
                   fontSize: titleSize,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: TurfitColors.whiteLight,
                 ),
                 textAlign: (showBackButton || onMenuTap != null)
                     ? TextAlign.center
@@ -193,7 +193,7 @@ class KidFriendlyAppBar extends StatelessWidget implements PreferredSizeWidget {
                 style: GoogleFonts.nunito(
                   fontSize: subtitleSize,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white.withValues(alpha: 0.9),
+                  color: TurfitColors.whiteLight.withValues(alpha: 0.9),
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 2,
@@ -219,14 +219,14 @@ class KidFriendlyAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Container(
         padding: EdgeInsets.all(2.w),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.15),
+          color: TurfitColors.whiteLight.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: TurfitColors.whiteLight.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
-        child: Icon(icon, color: Colors.white, size: 20.sp),
+        child: Icon(icon, color: TurfitColors.whiteLight, size: 20.sp),
       ),
     ).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.8, 0.8));
   }
@@ -243,16 +243,16 @@ class KidFriendlyAppBar extends StatelessWidget implements PreferredSizeWidget {
           Container(
             padding: EdgeInsets.all(2.w),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: TurfitColors.whiteLight.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: TurfitColors.whiteLight.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
             child: Icon(
               Icons.notifications_rounded,
-              color: Colors.white,
+              color: TurfitColors.whiteLight,
               size: 20.sp,
             ),
           ),
@@ -270,7 +270,10 @@ class KidFriendlyAppBar extends StatelessWidget implements PreferredSizeWidget {
                         decoration: BoxDecoration(
                           color: TurfitColors.secondaryLight,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.white, width: 1.5),
+                          border: Border.all(
+                            color: TurfitColors.whiteLight,
+                            width: 1.5,
+                          ),
                         ),
                         child: Text(
                           notificationCount > 99
@@ -279,7 +282,7 @@ class KidFriendlyAppBar extends StatelessWidget implements PreferredSizeWidget {
                           style: GoogleFonts.nunito(
                             fontSize: 8.sp,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: TurfitColors.whiteLight,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -349,10 +352,10 @@ class SimpleKidAppBar extends StatelessWidget implements PreferredSizeWidget {
         style: GoogleFonts.nunito(
           fontSize: 18.sp,
           fontWeight: FontWeight.w800,
-          color: Colors.white,
+          color: TurfitColors.whiteLight,
         ),
       ),
-      backgroundColor: Colors.transparent,
+      backgroundColor: TurfitColors.transparentLight,
       flexibleSpace: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

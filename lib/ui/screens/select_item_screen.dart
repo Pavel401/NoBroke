@@ -17,25 +17,34 @@ class SelectItemScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final selection = Get.put(SelectionController());
     final itemsCtrl = Get.put(ItemsController());
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: TurfitColors.surfaceLight,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         title: Text(
           '🛍️ Pick an item',
-          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w700),
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w700,
+            color: colorScheme.onSurface,
+          ),
         ),
         actions: [
           Container(
             margin: EdgeInsets.only(right: 2.w),
             decoration: BoxDecoration(
-              color: TurfitColors.primaryLight.withOpacity(0.1),
+              color: colorScheme.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
               tooltip: 'Add custom item',
               icon: Icon(
                 Icons.add_circle_outline,
-                color: TurfitColors.primaryLight,
+                color: colorScheme.primary,
                 size: 24.sp,
               ),
               onPressed: () => Get.toNamed(Routes.addItem),
@@ -48,10 +57,7 @@ class SelectItemScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              TurfitColors.surfaceLight,
-              TurfitColors.surfaceLight.withOpacity(0.8),
-            ],
+            colors: [colorScheme.surface, colorScheme.surface.withOpacity(0.8)],
           ),
         ),
         child: Padding(
@@ -61,11 +67,11 @@ class SelectItemScreen extends StatelessWidget {
               // Enhanced search bar
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: TurfitColors.primaryLight.withOpacity(0.1),
+                      color: colorScheme.primary.withOpacity(0.1),
                       offset: const Offset(0, 4),
                       blurRadius: 12,
                     ),
