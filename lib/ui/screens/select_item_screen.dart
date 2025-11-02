@@ -9,6 +9,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../controllers/selection_controller.dart';
 import '../../controllers/items_controller.dart';
+import '../../services/audio_service.dart';
 import '../../routes/app_pages.dart';
 import '../../db/app_db.dart';
 import '../colors.dart';
@@ -427,6 +428,9 @@ class SelectItemScreen extends StatelessWidget {
                             },
                             child: Bounceable(
                               onTap: () {
+                                // Play button click sound
+                                AudioService().playButtonClick();
+
                                 HapticFeedback.lightImpact();
                                 selection.pickItemFull(
                                   it.name,

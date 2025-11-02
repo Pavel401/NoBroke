@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../services/audio_service.dart';
 import '../colors.dart';
 
 class KidFriendlyNavBar extends StatefulWidget {
@@ -79,6 +80,7 @@ class _KidFriendlyNavBarState extends State<KidFriendlyNavBar>
   }
 
   void _onTap(int index) {
+    AudioService().playButtonClick();
     HapticFeedback.lightImpact();
 
     // Bounce animation

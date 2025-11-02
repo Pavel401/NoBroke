@@ -11,6 +11,7 @@ import '../../data/investments.dart';
 import '../../data/default_items.dart';
 import '../../services/market_service.dart';
 import '../../services/onboarding_service.dart';
+import '../../services/audio_service.dart';
 import '../../db/app_db.dart';
 import 'package:drift/drift.dart' as d;
 import 'package:growthapp/ui/theme.dart';
@@ -25,7 +26,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final _service = MarketService();
+  final _service = Get.find<MarketService>();
   bool _syncing = false;
   bool _generatingDummyData = false;
   double _progress = 0;
@@ -312,6 +313,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       subtitle: 'Set your name, image, and date of birth',
                       leadingIcon: Icons.person_outline,
                       onTap: () async {
+                        AudioService().playButtonClick();
                         await Get.to(() => ProfileScreen());
                         setState(() {});
                       },
@@ -333,7 +335,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ),
                             )
                           : null,
-                      onTap: _syncing ? null : _sync,
+                      onTap: _syncing
+                          ? null
+                          : () {
+                              AudioService().playButtonClick();
+                              _sync();
+                            },
                     ),
 
                     if (_syncing) ...[
@@ -377,14 +384,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               )
                             : null,
-                        onTap: _generatingDummyData ? null : _generateDummyData,
+                        onTap: _generatingDummyData
+                            ? null
+                            : () {
+                                AudioService().playButtonClick();
+                                _generateDummyData();
+                              },
                       ),
                       SizedBox(height: 2.h),
                       TapTile(
                         title: 'Clear All Data',
                         subtitle: 'Delete all savings data (cannot be undone)',
                         leadingIcon: Icons.delete_forever,
-                        onTap: _clearAllData,
+                        onTap: () {
+                          AudioService().playButtonClick();
+                          _clearAllData();
+                        },
                       ),
                       SizedBox(height: 2.h),
                       TapTile(
@@ -393,6 +408,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             'Show onboarding screens again on next launch',
                         leadingIcon: Icons.refresh_outlined,
                         onTap: () async {
+                          AudioService().playButtonClick();
                           await OnboardingService.resetOnboarding();
                           AwesomeSnackbarHelper.showSuccess(
                             context,
@@ -407,7 +423,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         subtitle:
                             'View raw database tables and export data (Debug Only)',
                         leadingIcon: Icons.admin_panel_settings_outlined,
-                        onTap: () => Get.to(() => const AdminDbViewerScreen()),
+                        onTap: () {
+                          AudioService().playButtonClick();
+                          Get.to(() => const AdminDbViewerScreen());
+                        },
                       ),
                       SizedBox(height: 2.h),
                       TapTile(
@@ -415,6 +434,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         subtitle: 'Click to show a sample Awesome Snackbar',
                         leadingIcon: Icons.snapchat,
                         onTap: () {
+                          AudioService().playButtonClick();
                           AwesomeSnackbarHelper.showError(
                             context,
                             'Hello!',

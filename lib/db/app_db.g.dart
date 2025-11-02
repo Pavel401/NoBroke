@@ -1460,12 +1460,282 @@ class CatalogItemsCompanion extends UpdateCompanion<CatalogItem> {
   }
 }
 
+class $MarketCacheTable extends MarketCache
+    with TableInfo<$MarketCacheTable, MarketCacheData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MarketCacheTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _symbolMeta = const VerificationMeta('symbol');
+  @override
+  late final GeneratedColumn<String> symbol = GeneratedColumn<String>(
+    'symbol',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _closesJsonMeta = const VerificationMeta(
+    'closesJson',
+  );
+  @override
+  late final GeneratedColumn<String> closesJson = GeneratedColumn<String>(
+    'closes_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [symbol, updatedAt, closesJson];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'market_cache';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MarketCacheData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('symbol')) {
+      context.handle(
+        _symbolMeta,
+        symbol.isAcceptableOrUnknown(data['symbol']!, _symbolMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_symbolMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('closes_json')) {
+      context.handle(
+        _closesJsonMeta,
+        closesJson.isAcceptableOrUnknown(data['closes_json']!, _closesJsonMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_closesJsonMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {symbol};
+  @override
+  MarketCacheData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MarketCacheData(
+      symbol: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}symbol'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      closesJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}closes_json'],
+      )!,
+    );
+  }
+
+  @override
+  $MarketCacheTable createAlias(String alias) {
+    return $MarketCacheTable(attachedDatabase, alias);
+  }
+}
+
+class MarketCacheData extends DataClass implements Insertable<MarketCacheData> {
+  final String symbol;
+  final DateTime updatedAt;
+  final String closesJson;
+  const MarketCacheData({
+    required this.symbol,
+    required this.updatedAt,
+    required this.closesJson,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['symbol'] = Variable<String>(symbol);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['closes_json'] = Variable<String>(closesJson);
+    return map;
+  }
+
+  MarketCacheCompanion toCompanion(bool nullToAbsent) {
+    return MarketCacheCompanion(
+      symbol: Value(symbol),
+      updatedAt: Value(updatedAt),
+      closesJson: Value(closesJson),
+    );
+  }
+
+  factory MarketCacheData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MarketCacheData(
+      symbol: serializer.fromJson<String>(json['symbol']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      closesJson: serializer.fromJson<String>(json['closesJson']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'symbol': serializer.toJson<String>(symbol),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'closesJson': serializer.toJson<String>(closesJson),
+    };
+  }
+
+  MarketCacheData copyWith({
+    String? symbol,
+    DateTime? updatedAt,
+    String? closesJson,
+  }) => MarketCacheData(
+    symbol: symbol ?? this.symbol,
+    updatedAt: updatedAt ?? this.updatedAt,
+    closesJson: closesJson ?? this.closesJson,
+  );
+  MarketCacheData copyWithCompanion(MarketCacheCompanion data) {
+    return MarketCacheData(
+      symbol: data.symbol.present ? data.symbol.value : this.symbol,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      closesJson: data.closesJson.present
+          ? data.closesJson.value
+          : this.closesJson,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MarketCacheData(')
+          ..write('symbol: $symbol, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('closesJson: $closesJson')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(symbol, updatedAt, closesJson);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MarketCacheData &&
+          other.symbol == this.symbol &&
+          other.updatedAt == this.updatedAt &&
+          other.closesJson == this.closesJson);
+}
+
+class MarketCacheCompanion extends UpdateCompanion<MarketCacheData> {
+  final Value<String> symbol;
+  final Value<DateTime> updatedAt;
+  final Value<String> closesJson;
+  final Value<int> rowid;
+  const MarketCacheCompanion({
+    this.symbol = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.closesJson = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MarketCacheCompanion.insert({
+    required String symbol,
+    required DateTime updatedAt,
+    required String closesJson,
+    this.rowid = const Value.absent(),
+  }) : symbol = Value(symbol),
+       updatedAt = Value(updatedAt),
+       closesJson = Value(closesJson);
+  static Insertable<MarketCacheData> custom({
+    Expression<String>? symbol,
+    Expression<DateTime>? updatedAt,
+    Expression<String>? closesJson,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (symbol != null) 'symbol': symbol,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (closesJson != null) 'closes_json': closesJson,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MarketCacheCompanion copyWith({
+    Value<String>? symbol,
+    Value<DateTime>? updatedAt,
+    Value<String>? closesJson,
+    Value<int>? rowid,
+  }) {
+    return MarketCacheCompanion(
+      symbol: symbol ?? this.symbol,
+      updatedAt: updatedAt ?? this.updatedAt,
+      closesJson: closesJson ?? this.closesJson,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (symbol.present) {
+      map['symbol'] = Variable<String>(symbol.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (closesJson.present) {
+      map['closes_json'] = Variable<String>(closesJson.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MarketCacheCompanion(')
+          ..write('symbol: $symbol, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('closesJson: $closesJson, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDb extends GeneratedDatabase {
   _$AppDb(QueryExecutor e) : super(e);
   $AppDbManager get managers => $AppDbManager(this);
   late final $SavingsTable savings = $SavingsTable(this);
   late final $ProfilesTable profiles = $ProfilesTable(this);
   late final $CatalogItemsTable catalogItems = $CatalogItemsTable(this);
+  late final $MarketCacheTable marketCache = $MarketCacheTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1474,6 +1744,7 @@ abstract class _$AppDb extends GeneratedDatabase {
     savings,
     profiles,
     catalogItems,
+    marketCache,
   ];
 }
 
@@ -2205,6 +2476,170 @@ typedef $$CatalogItemsTableProcessedTableManager =
       CatalogItem,
       PrefetchHooks Function()
     >;
+typedef $$MarketCacheTableCreateCompanionBuilder =
+    MarketCacheCompanion Function({
+      required String symbol,
+      required DateTime updatedAt,
+      required String closesJson,
+      Value<int> rowid,
+    });
+typedef $$MarketCacheTableUpdateCompanionBuilder =
+    MarketCacheCompanion Function({
+      Value<String> symbol,
+      Value<DateTime> updatedAt,
+      Value<String> closesJson,
+      Value<int> rowid,
+    });
+
+class $$MarketCacheTableFilterComposer
+    extends Composer<_$AppDb, $MarketCacheTable> {
+  $$MarketCacheTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get symbol => $composableBuilder(
+    column: $table.symbol,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get closesJson => $composableBuilder(
+    column: $table.closesJson,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$MarketCacheTableOrderingComposer
+    extends Composer<_$AppDb, $MarketCacheTable> {
+  $$MarketCacheTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get symbol => $composableBuilder(
+    column: $table.symbol,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get closesJson => $composableBuilder(
+    column: $table.closesJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$MarketCacheTableAnnotationComposer
+    extends Composer<_$AppDb, $MarketCacheTable> {
+  $$MarketCacheTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get symbol =>
+      $composableBuilder(column: $table.symbol, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get closesJson => $composableBuilder(
+    column: $table.closesJson,
+    builder: (column) => column,
+  );
+}
+
+class $$MarketCacheTableTableManager
+    extends
+        RootTableManager<
+          _$AppDb,
+          $MarketCacheTable,
+          MarketCacheData,
+          $$MarketCacheTableFilterComposer,
+          $$MarketCacheTableOrderingComposer,
+          $$MarketCacheTableAnnotationComposer,
+          $$MarketCacheTableCreateCompanionBuilder,
+          $$MarketCacheTableUpdateCompanionBuilder,
+          (
+            MarketCacheData,
+            BaseReferences<_$AppDb, $MarketCacheTable, MarketCacheData>,
+          ),
+          MarketCacheData,
+          PrefetchHooks Function()
+        > {
+  $$MarketCacheTableTableManager(_$AppDb db, $MarketCacheTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MarketCacheTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MarketCacheTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MarketCacheTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> symbol = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<String> closesJson = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MarketCacheCompanion(
+                symbol: symbol,
+                updatedAt: updatedAt,
+                closesJson: closesJson,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String symbol,
+                required DateTime updatedAt,
+                required String closesJson,
+                Value<int> rowid = const Value.absent(),
+              }) => MarketCacheCompanion.insert(
+                symbol: symbol,
+                updatedAt: updatedAt,
+                closesJson: closesJson,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$MarketCacheTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDb,
+      $MarketCacheTable,
+      MarketCacheData,
+      $$MarketCacheTableFilterComposer,
+      $$MarketCacheTableOrderingComposer,
+      $$MarketCacheTableAnnotationComposer,
+      $$MarketCacheTableCreateCompanionBuilder,
+      $$MarketCacheTableUpdateCompanionBuilder,
+      (
+        MarketCacheData,
+        BaseReferences<_$AppDb, $MarketCacheTable, MarketCacheData>,
+      ),
+      MarketCacheData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDbManager {
   final _$AppDb _db;
@@ -2215,4 +2650,6 @@ class $AppDbManager {
       $$ProfilesTableTableManager(_db, _db.profiles);
   $$CatalogItemsTableTableManager get catalogItems =>
       $$CatalogItemsTableTableManager(_db, _db.catalogItems);
+  $$MarketCacheTableTableManager get marketCache =>
+      $$MarketCacheTableTableManager(_db, _db.marketCache);
 }

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
+import 'package:growthapp/ui/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../db/app_db.dart';
+import '../../services/share_service.dart';
+import '../../services/audio_service.dart';
 import 'package:get/get.dart';
 import '../icon_utils.dart';
-import '../components/engagement_widgets.dart';
 import '../components/kid_friendly_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,21 +34,21 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: colorScheme.surface,
       appBar: KidFriendlyAppBar(
         title: '💰 Your Smart Savings',
-        trailing: StreamBuilder<List<Saving>>(
-          stream: db.watchSavings(),
-          builder: (context, snapshot) {
-            final savings = snapshot.data ?? [];
-            final weekAgo = DateTime.now().subtract(const Duration(days: 7));
-            final weeklyCount = savings
-                .where((s) => s.createdAt.isAfter(weekAgo))
-                .length;
+        // trailing: StreamBuilder<List<Saving>>(
+        //   stream: db.watchSavings(),
+        //   builder: (context, snapshot) {
+        //     final savings = snapshot.data ?? [];
+        //     final weekAgo = DateTime.now().subtract(const Duration(days: 7));
+        //     final weeklyCount = savings
+        //         .where((s) => s.createdAt.isAfter(weekAgo))
+        //         .length;
 
-            return StreakBadge(
-              streakCount: weeklyCount,
-              label: '',
-            ).animate(delay: 500.ms).fadeIn().scale();
-          },
-        ),
+        //     return StreakBadge(
+        //       streakCount: weeklyCount,
+        //       label: '',
+        //     ).animate(delay: 500.ms).fadeIn().scale();
+        //   },
+        // ),
       ),
       body: Padding(
         padding: EdgeInsets.all(4.w),
@@ -102,7 +104,10 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Filter Button
                 Bounceable(
-                  onTap: () => _showFilterBottomSheet(context, years),
+                  onTap: () {
+                    AudioService().playButtonClick();
+                    _showFilterBottomSheet(context, years);
+                  },
                   child: Container(
                     padding: EdgeInsets.all(4.w),
                     decoration: BoxDecoration(
@@ -156,8 +161,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             final sign = s.returnPct >= 0 ? '+' : '';
                             final inc = s.finalValue - s.amount;
                             return Bounceable(
-                              onTap: () =>
-                                  Get.toNamed('/saving-detail', arguments: s),
+                              onTap: () {
+                                AudioService().playButtonClick();
+                                Get.toNamed('/saving-detail', arguments: s);
+                              },
                               child: Container(
                                 margin: EdgeInsets.only(bottom: 2.h),
                                 decoration: BoxDecoration(
@@ -273,6 +280,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ],
                                         ),
                                       ),
+                                      // SizedBox(width: 1.w),
+                                      // // Share button
+                                      // Bounceable(
+                                      //   onTap: () {
+                                      //     AudioService().playButtonClick();
+                                      //     _shareAchievement(context, s);
+                                      //   },
+                                      //   child: Container(
+                                      //     padding: EdgeInsets.all(2.w),
+                                      //     decoration: BoxDecoration(
+                                      //       color: colorScheme.primary
+                                      //           .withValues(alpha: 0.1),
+                                      //       borderRadius: BorderRadius.circular(
+                                      //         8,
+                                      //       ),
+                                      //     ),
+                                      //     child: Icon(
+                                      //       Icons.share,
+                                      //       size: 16.sp,
+                                      //       color: TurfitColors.green(context),
+                                      //     ),
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),
@@ -404,6 +434,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: Bounceable(
                       onTap: () {
+                        AudioService().playButtonClick();
                         setBottomSheetState(() {
                           tempSelectedYear = null;
                           tempSelectedMonth = null;
@@ -441,6 +472,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: Bounceable(
                       onTap: () {
+                        AudioService().playButtonClick();
                         setState(() {
                           selectedYear = tempSelectedYear;
                           selectedMonth = tempSelectedMonth;
@@ -491,7 +523,10 @@ class _HomeScreenState extends State<HomeScreen> {
       children: options.map((option) {
         final isSelected = option == selectedValue;
         return Bounceable(
-          onTap: () => onChanged(option),
+          onTap: () {
+            AudioService().playButtonClick();
+            onChanged(option);
+          },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
             decoration: BoxDecoration(
@@ -518,6 +553,18 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }).toList(),
     );
+  }
+
+  Future<void> _shareAchievement(BuildContext context, Saving saving) async {
+    try {
+      // Navigate to achievement share preview screen
+      Get.toNamed('/achievement-share-preview', arguments: saving);
+    } catch (e) {
+      // Handle error silently or show a simple message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not share achievement')),
+      );
+    }
   }
 
   String _money(double v) => '\$${v.toStringAsFixed(2)}';

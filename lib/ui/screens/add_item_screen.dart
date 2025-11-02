@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../controllers/items_controller.dart';
+import '../../services/audio_service.dart';
 import '../icon_utils.dart';
 
 class AddItemScreen extends StatefulWidget {
@@ -55,7 +56,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
               Obx(() {
                 final cats = items.categories;
                 return DropdownButtonFormField<String>(
-                  value:
+                  initialValue:
                       _selectedCategory != null &&
                           cats.contains(_selectedCategory)
                       ? _selectedCategory
@@ -81,6 +82,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 subtitle: Text(_selectedIconName ?? 'Choose a Material icon'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () async {
+                  AudioService().playButtonClick();
                   final picked = await showModalBottomSheet<String>(
                     context: context,
                     isScrollControlled: true,
@@ -215,7 +217,10 @@ class _IconPickerSheetState extends State<_IconPickerSheet> {
                   final name = filtered[index];
                   final selected = name == widget.initial;
                   return InkWell(
-                    onTap: () => Navigator.pop(context, name),
+                    onTap: () {
+                      AudioService().playButtonClick();
+                      Navigator.pop(context, name);
+                    },
                     child: Center(
                       child: CircleAvatar(
                         backgroundColor: selected

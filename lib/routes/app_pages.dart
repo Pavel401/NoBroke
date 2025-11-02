@@ -10,6 +10,7 @@ import '../ui/screens/root_tabs.dart';
 import '../ui/screens/add_item_screen.dart';
 import '../ui/screens/saving_detail_screen.dart';
 import '../ui/screens/admin_db_viewer_screen.dart';
+import '../ui/screens/achievement_share_preview_screen.dart';
 
 class Routes {
   static const onboarding = '/onboarding';
@@ -22,6 +23,7 @@ class Routes {
   static const tabs = '/tabs';
   static const savingDetail = '/saving-detail';
   static const adminDbViewer = '/admin-db-viewer';
+  static const achievementSharePreview = '/achievement-share-preview';
 }
 
 class AppPages {
@@ -43,6 +45,10 @@ class AppPages {
     GetPage(
       name: Routes.adminDbViewer,
       page: () => const AdminDbViewerScreen(),
+    ),
+    GetPage(
+      name: Routes.achievementSharePreview,
+      page: () => AchievementSharePreviewScreen(saving: Get.arguments),
     ),
   ];
 }

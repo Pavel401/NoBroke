@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:hive_flutter/hive_flutter.dart';
+import '../db/app_db.dart';
 
 class PriceSnapshot {
   final double? start; // ~1y ago close
@@ -14,19 +14,20 @@ class MarketService {
   // Weekly TTL; can be overridden with manual Sync.
   static const _cacheTtlDays = 7;
 
-  Box get _box => Hive.box('marketCache');
+  final AppDb _db;
+
+  MarketService(this._db);
 
   Future<PriceSnapshot?> fetchOneYearPrices(
     String symbol, {
     bool forceRefresh = false,
   }) async {
-    final cached = _box.get(symbol);
-    if (cached is Map && !forceRefresh) {
-      final ts =
-          DateTime.tryParse(cached['updated'] as String? ?? '') ??
-          DateTime.fromMillisecondsSinceEpoch(0);
+    final cached = await _db.getMarketCache(symbol);
+    if (cached != null && !forceRefresh) {
+      final ts = cached.updatedAt;
       if (DateTime.now().difference(ts).inDays < _cacheTtlDays) {
-        final closes = (cached['closes'] as List?)?.cast<num?>();
+        final closesJson = cached.closesJson;
+        final closes = (jsonDecode(closesJson) as List?)?.cast<num?>();
         if (closes != null && closes.isNotEmpty) {
           final first = _firstNonNull(closes)?.toDouble();
           final last = _lastNonNull(closes)?.toDouble();
@@ -59,10 +60,7 @@ class MarketService {
 
     // print("The Updated Prices for $symbol are: $closes");
 
-    await _box.put(symbol, {
-      'updated': DateTime.now().toIso8601String(),
-      'closes': closes,
-    });
+    await _db.setMarketCache(symbol, DateTime.now(), jsonEncode(closes));
 
     print("The Updated Prices for $symbol are: $first to $last");
 

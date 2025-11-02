@@ -44,12 +44,21 @@ class Profiles extends Table {
   Set<Column<Object>>? get primaryKey => {id};
 }
 
-@DriftDatabase(tables: [Savings, Profiles, CatalogItems])
+class MarketCache extends Table {
+  TextColumn get symbol => text()();
+  DateTimeColumn get updatedAt => dateTime()();
+  TextColumn get closesJson => text()(); // JSON array of close prices
+
+  @override
+  Set<Column<Object>>? get primaryKey => {symbol};
+}
+
+@DriftDatabase(tables: [Savings, Profiles, CatalogItems, MarketCache])
 class AppDb extends _$AppDb {
   AppDb() : super(_openConnection());
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -142,6 +151,10 @@ class AppDb extends _$AppDb {
           'ALTER TABLE profiles ADD COLUMN gender TEXT;',
         );
       }
+      if (from < 7) {
+        // Add market cache table
+        await m.createTable($MarketCacheTable(m.database));
+      }
     },
   );
 
@@ -205,6 +218,29 @@ class AppDb extends _$AppDb {
     final row = await q.getSingle();
     return row.read(exp) ?? 0;
   }
+
+  // Market cache ops
+  Future<MarketCacheData?> getMarketCache(String symbol) async {
+    final query = select(marketCache)..where((t) => t.symbol.equals(symbol));
+    final rows = await query.get();
+    return rows.isNotEmpty ? rows.first : null;
+  }
+
+  Future<void> setMarketCache(
+    String symbol,
+    DateTime updatedAt,
+    String closesJson,
+  ) async {
+    await into(marketCache).insertOnConflictUpdate(
+      MarketCacheCompanion.insert(
+        symbol: symbol,
+        updatedAt: updatedAt,
+        closesJson: closesJson,
+      ),
+    );
+  }
+
+  Future<void> clearMarketCache() => delete(marketCache).go();
 }
 
 LazyDatabase _openConnection() {

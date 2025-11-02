@@ -10,6 +10,7 @@ import 'package:flutter_confetti/flutter_confetti.dart';
 import '../../controllers/selection_controller.dart';
 import '../../controllers/market_controller.dart';
 import '../../services/market_service.dart';
+import '../../services/audio_service.dart';
 import '../../db/app_db.dart';
 import '../colors.dart';
 import '../components/kid_friendly_app_bar.dart';
@@ -29,7 +30,7 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   void initState() {
     super.initState();
-    market = Get.put(MarketController(MarketService()));
+    market = Get.put(MarketController(Get.find<MarketService>()));
     final symbol =
         Get.find<SelectionController>().selectedInvestmentSymbol.value;
     if (symbol.isNotEmpty) {
@@ -387,6 +388,10 @@ class _ResultScreenState extends State<ResultScreen> {
                       child: Bounceable(
                         onTap: () async {
                           HapticFeedback.lightImpact();
+
+                          // Play win sound when saving
+                          AudioService().playWinSound();
+
                           final db = Get.find<AppDb>();
                           await db.addSaving(
                             SavingsCompanion.insert(
@@ -405,13 +410,16 @@ class _ResultScreenState extends State<ResultScreen> {
                             ),
                           );
 
-                          // Launch confetti animation
+                          // Launch confetti animation with increased duration
                           Confetti.launch(
                             context,
                             options: const ConfettiOptions(
-                              particleCount: 100,
-                              spread: 70,
+                              particleCount: 150,
+                              spread: 80,
                               y: 0.6,
+                              gravity: 0.5, // Slower falling
+                              drift: 0.1, // Slight drift
+                              scalar: 1.2, // Bigger particles
                             ),
                           );
 

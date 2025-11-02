@@ -7,6 +7,7 @@ import 'package:sizer/sizer.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../db/app_db.dart';
+import '../../services/audio_service.dart';
 import '../colors.dart';
 
 class AnalyticsScreen extends StatefulWidget {
@@ -274,7 +275,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
             children: [null, ...years].map((year) {
               final isSelected = year == selectedYear;
               return GestureDetector(
-                onTap: () => setState(() => selectedYear = year),
+                onTap: () {
+                  AudioService().playButtonClick();
+                  setState(() => selectedYear = year);
+                },
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
                   decoration: BoxDecoration(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:growthapp/ui/colors.dart';
 import 'package:growthapp/ui/components/kid_friendly_nav_bar.dart';
+import 'package:growthapp/services/audio_service.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -121,7 +122,11 @@ class _RootTabsState extends State<RootTabs> with TickerProviderStateMixin {
             ),
             child:
                 FloatingActionButton(
-                      onPressed: () => Get.toNamed('/select-item'),
+                      onPressed: () {
+                        // Play button click sound
+                        AudioService().playButtonClick();
+                        Get.toNamed('/select-item');
+                      },
                       backgroundColor: TurfitColors.primary(context),
                       foregroundColor: TurfitColors.white(context),
                       elevation: 8,

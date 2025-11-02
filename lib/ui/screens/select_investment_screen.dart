@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 
 import '../../controllers/selection_controller.dart';
+import '../../services/audio_service.dart';
 import '../../routes/app_pages.dart';
 import '../../data/investments.dart';
 import '../colors.dart';
@@ -164,6 +165,9 @@ class SelectInvestmentScreen extends StatelessWidget {
                   final inv = investments[index];
                   return Bounceable(
                     onTap: () {
+                      // Play button click sound
+                      AudioService().playButtonClick();
+
                       HapticFeedback.lightImpact();
                       selection.pickInvestment(inv.symbol, inv.name, inv.emoji);
                       Get.toNamed(Routes.result);

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../services/audio_service.dart';
 import '../colors.dart';
 
 class KidFriendlyFAB extends StatefulWidget {
@@ -49,6 +50,7 @@ class _KidFriendlyFABState extends State<KidFriendlyFAB>
   }
 
   void _onTap() {
+    AudioService().playButtonClick();
     HapticFeedback.mediumImpact();
     _bounceController.forward().then((_) {
       _bounceController.reverse();

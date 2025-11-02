@@ -29,9 +29,11 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   animated_text_kit: ^4.3.0
+  audioplayers: ^6.1.0
   awesome_snackbar_content: ^0.1.8
   build_runner: ^2.10.1
   cupertino_icons: ^1.0.8
+  davinci: ^2.5.1
   drift: ^2.29.0
   drift_dev: ^2.29.0
   drift_flutter: ^0.2.7
@@ -43,8 +45,6 @@ dependencies:
   flutter_confetti: ^0.5.1
   get: ^4.6.6
   google_fonts: ^6.3.2
-  hive: ^2.2.3
-  hive_flutter: ^1.1.0
   http: ^1.2.2
   iconsax_flutter: ^1.0.1
   intl: ^0.20.2
@@ -101,3 +101,4 @@ flutter:
   # see https://flutter.dev/to/font-from-package
   assets:
     - assets/lotties/
+    - assets/audio/

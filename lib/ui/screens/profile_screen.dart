@@ -6,6 +6,7 @@ import 'package:sizer/sizer.dart';
 import 'package:drift/drift.dart' as d;
 
 import '../../db/app_db.dart';
+import '../../services/audio_service.dart';
 import '../colors.dart';
 import '../components/awesome_snackbar_helper.dart';
 
@@ -293,7 +294,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildDateField() {
     return InkWell(
-      onTap: _pickDob,
+      onTap: () {
+        AudioService().playButtonClick();
+        _pickDob();
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         decoration: BoxDecoration(

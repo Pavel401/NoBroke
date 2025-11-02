@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 
 import '../../controllers/selection_controller.dart';
+import '../../services/audio_service.dart';
 import '../../routes/app_pages.dart';
 import '../icon_utils.dart';
 import '../colors.dart';
@@ -54,9 +55,10 @@ class _EnterPriceScreenState extends State<EnterPriceScreen> {
   }
 
   void _onContinue() {
-    final value = double.tryParse(_controller.text.replaceAll(',', ''));
+    final text = _controller.text.replaceAll(',', '').trim();
+    final value = double.tryParse(text);
+
     if (value == null || value <= 0) {
-      HapticFeedback.mediumImpact();
       setState(() {
         _isValid = false;
       });
@@ -67,6 +69,9 @@ class _EnterPriceScreenState extends State<EnterPriceScreen> {
       );
       return;
     }
+
+    // Play button click sound
+    AudioService().playButtonClick();
 
     HapticFeedback.lightImpact();
     final selection = Get.find<SelectionController>();

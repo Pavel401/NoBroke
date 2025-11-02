@@ -11,6 +11,8 @@ import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../db/app_db.dart';
+import '../../services/share_service.dart';
+import '../../services/audio_service.dart';
 import '../icon_utils.dart';
 import '../components/awesome_snackbar_helper.dart';
 
@@ -36,17 +38,33 @@ class SavingDetailScreen extends StatelessWidget {
         title: '💰 Savings Details',
         actions: [
           Bounceable(
-            onTap: () => _showDeleteDialog(context, saving, db),
+            onTap: () {
+              AudioService().playButtonClick();
+              _shareAchievement(context, saving);
+            },
+            child: Container(
+              margin: EdgeInsets.only(right: 2.w),
+              padding: EdgeInsets.all(2.w),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                Icons.share,
+                color: TurfitColors.primaryLight,
+                size: 20.sp,
+              ),
+            ),
+          ),
+          Bounceable(
+            onTap: () {
+              AudioService().playButtonClick();
+              _showDeleteDialog(context, saving, db);
+            },
             child: Container(
               margin: EdgeInsets.only(right: 4.w),
               padding: EdgeInsets.all(2.w),
               decoration: BoxDecoration(
-                // color: TurfitColors.errorLight.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
-                // border: Border.all(
-                //   color: TurfitColors.errorLight.withValues(alpha: 0.3),
-                //   width: 1,
-                // ),
               ),
               child: Icon(
                 Icons.delete,
@@ -512,7 +530,10 @@ class SavingDetailScreen extends StatelessWidget {
         ),
         actions: [
           Bounceable(
-            onTap: () => Navigator.pop(ctx, false),
+            onTap: () {
+              AudioService().playButtonClick();
+              Navigator.pop(ctx, false);
+            },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.5.h),
               decoration: BoxDecoration(
@@ -530,7 +551,10 @@ class SavingDetailScreen extends StatelessWidget {
             ),
           ),
           Bounceable(
-            onTap: () => Navigator.pop(ctx, true),
+            onTap: () {
+              AudioService().playButtonClick();
+              Navigator.pop(ctx, true);
+            },
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.5.h),
               decoration: BoxDecoration(
@@ -563,15 +587,82 @@ class SavingDetailScreen extends StatelessWidget {
     }
   }
 
-  String _getFunFact(Saving saving) {
-    final years5Value =
-        saving.amount * MathUtils.pow(1 + (saving.returnPct / 100.0), 5);
-    final extraGain = years5Value - saving.amount;
+  Future<void> _shareAchievement(BuildContext context, Saving saving) async {
+    try {
+      HapticFeedback.lightImpact();
 
-    if (saving.returnPct > 0) {
-      return 'If you invested your ${saving.itemName} money (${_money(saving.amount)}) instead of spending it, you could have an extra ${_money(extraGain)} after 5 years! That\'s the power of compound growth! 🚀';
-    } else {
-      return 'Even though ${saving.investmentName} had a tough year, remember that investments can go up and down. The key is to stay patient and think long-term! 💪';
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: EdgeInsets.all(4.w),
+            decoration: BoxDecoration(
+              color: TurfitColors.white(context),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    TurfitColors.primaryLight,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  'Creating your achievement...',
+                  style: GoogleFonts.nunito(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: TurfitColors.grey700(context),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      // Share the achievement
+      // Get the render box for positioning the share dialog
+      final RenderBox? box = context.findRenderObject() as RenderBox?;
+      final Rect? sharePositionOrigin = box != null
+          ? Rect.fromLTWH(
+              box.localToGlobal(Offset.zero).dx,
+              box.localToGlobal(Offset.zero).dy,
+              box.size.width,
+              box.size.height,
+            )
+          : null;
+
+      await ShareService().shareAchievement(
+        context,
+        saving,
+        sharePositionOrigin: sharePositionOrigin,
+      );
+
+      // Close loading dialog
+      Navigator.of(context).pop();
+
+      AwesomeSnackbarHelper.showSuccess(
+        context,
+        'Achievement Shared! 🎉',
+        'Your investment success has been shared!',
+      );
+    } catch (e) {
+      // Close loading dialog if still open
+      if (Navigator.canPop(context)) {
+        Navigator.of(context).pop();
+      }
+
+      AwesomeSnackbarHelper.showError(
+        context,
+        'Share Failed',
+        'Could not share achievement. Please try again.',
+      );
     }
   }
 

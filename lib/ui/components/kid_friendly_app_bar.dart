@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../services/audio_service.dart';
 import '../colors.dart';
 
 class KidFriendlyAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -87,10 +88,19 @@ class KidFriendlyAppBar extends StatelessWidget implements PreferredSizeWidget {
         if (showBackButton)
           _buildActionButton(
             icon: Icons.arrow_back_ios,
-            onTap: onBackPressed ?? () {},
+            onTap: () {
+              AudioService().playButtonClick();
+              if (onBackPressed != null) onBackPressed!();
+            },
           )
         else if (onMenuTap != null)
-          _buildActionButton(icon: Icons.menu_rounded, onTap: onMenuTap!),
+          _buildActionButton(
+            icon: Icons.menu_rounded,
+            onTap: () {
+              AudioService().playButtonClick();
+              onMenuTap!();
+            },
+          ),
 
         if (showBackButton || onMenuTap != null) SizedBox(width: 3.w),
 
@@ -153,10 +163,19 @@ class KidFriendlyAppBar extends StatelessWidget implements PreferredSizeWidget {
             if (showBackButton)
               _buildActionButton(
                 icon: Icons.arrow_back_ios,
-                onTap: onBackPressed ?? () {},
+                onTap: () {
+                  AudioService().playButtonClick();
+                  if (onBackPressed != null) onBackPressed!();
+                },
               )
             else if (onMenuTap != null)
-              _buildActionButton(icon: Icons.menu_rounded, onTap: onMenuTap!),
+              _buildActionButton(
+                icon: Icons.menu_rounded,
+                onTap: () {
+                  AudioService().playButtonClick();
+                  onMenuTap!();
+                },
+              ),
 
             Expanded(
               child: Text(
