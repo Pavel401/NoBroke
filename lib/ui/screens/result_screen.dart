@@ -48,6 +48,14 @@ class _ResultScreenState extends State<ResultScreen> {
       appBar: SimpleKidAppBar(
         title: '🎉 Your What-If Result',
         automaticallyImplyLeading: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: TurfitColors.whiteDark,
+            size: 20.sp,
+          ),
+          onPressed: () => Get.back(),
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(

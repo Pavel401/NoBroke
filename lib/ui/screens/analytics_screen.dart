@@ -22,6 +22,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
   late AnimationController _fadeController;
   late AnimationController _countController;
 
+  // Year filter state
+  int? selectedYear;
+
   @override
   void initState() {
     super.initState();
@@ -65,19 +68,32 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
         child: StreamBuilder<List<Saving>>(
           stream: db.watchSavings(),
           builder: (context, snapshot) {
-            final items = snapshot.data ?? const [];
+            final allItems = snapshot.data ?? const [];
             final now = DateTime.now();
 
-            // Calculate yearly total (current year)
-            final yearlyTotal = items
-                .where((s) => s.createdAt.year == now.year)
-                .fold<double>(0, (sum, s) => sum + s.amount);
+            // Build year list from existing entries
+            final years = allItems.map((s) => s.createdAt.year).toSet().toList()
+              ..sort();
 
-            // Calculate monthly total
-            final currentMonthTotal = items
+            // Filter items by selected year (show all if no year selected)
+            final items = allItems.where((s) {
+              if (selectedYear == null) return true;
+              return s.createdAt.year == selectedYear;
+            }).toList();
+
+            // Calculate yearly total (for selected year or all years)
+            final yearlyTotal = selectedYear == null
+                ? allItems.fold<double>(0, (sum, s) => sum + s.amount)
+                : allItems
+                      .where((s) => s.createdAt.year == selectedYear)
+                      .fold<double>(0, (sum, s) => sum + s.amount);
+
+            // Calculate monthly total for current month of selected year (or current year if no selection)
+            final targetYear = selectedYear ?? now.year;
+            final currentMonthTotal = allItems
                 .where(
                   (s) =>
-                      s.createdAt.year == now.year &&
+                      s.createdAt.year == targetYear &&
                       s.createdAt.month == now.month,
                 )
                 .fold<double>(0, (sum, s) => sum + s.amount);
@@ -114,6 +130,10 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Year Filter
+                    if (allItems.isNotEmpty) _buildYearFilter(years),
+
+                    if (allItems.isNotEmpty) SizedBox(height: 3.h),
                     // // Header with celebration
                     // SlideTransition(
                     //   position:
@@ -210,6 +230,82 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildYearFilter(List<int> years) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: TurfitColors.card(context),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.primary.withOpacity(0.1),
+            offset: const Offset(0, 4),
+            blurRadius: 12,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.date_range, color: colorScheme.primary, size: 20.sp),
+              SizedBox(width: 3.w),
+              Text(
+                'Select Year',
+                style: GoogleFonts.nunito(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: TurfitColors.onSurface(context),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 2.h),
+          Wrap(
+            spacing: 2.w,
+            runSpacing: 1.h,
+            children: [null, ...years].map((year) {
+              final isSelected = year == selectedYear;
+              return GestureDetector(
+                onTap: () => setState(() => selectedYear = year),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? colorScheme.primary.withOpacity(0.1)
+                        : TurfitColors.card(context),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isSelected
+                          ? colorScheme.primary
+                          : colorScheme.outline.withOpacity(0.3),
+                      width: isSelected ? 2 : 1,
+                    ),
+                  ),
+                  child: Text(
+                    year?.toString() ?? 'All Years',
+                    style: GoogleFonts.nunito(
+                      fontSize: 12.sp,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                      color: isSelected
+                          ? colorScheme.primary
+                          : TurfitColors.onSurface(context),
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
@@ -343,7 +439,9 @@ class _AnalyticsScreenState extends State<AnalyticsScreen>
               Text('💎', style: TextStyle(fontSize: 20.sp)),
               SizedBox(width: 3.w),
               Text(
-                'Total Saved in ${DateTime.now().year}',
+                selectedYear == null
+                    ? 'Total Saved (All Years)'
+                    : 'Total Saved in $selectedYear',
                 style: GoogleFonts.nunito(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w700,

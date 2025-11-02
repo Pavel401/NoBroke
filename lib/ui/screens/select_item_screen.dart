@@ -28,6 +28,14 @@ class SelectItemScreen extends StatelessWidget {
       backgroundColor: colorScheme.surface,
       appBar: SimpleKidAppBar(
         title: '🛍️ Pick an Item',
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: TurfitColors.whiteDark,
+            size: 20.sp,
+          ),
+          onPressed: () => Get.back(),
+        ),
         actions: [
           Bounceable(
             onTap: () => Get.toNamed(Routes.addItem),
@@ -44,7 +52,7 @@ class SelectItemScreen extends StatelessWidget {
               ),
               child: Icon(
                 Icons.add_circle_outline,
-                color: TurfitColors.primaryLight,
+                color: TurfitColors.whiteDark,
                 size: 20.sp,
               ),
             ),

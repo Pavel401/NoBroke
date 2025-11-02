@@ -24,6 +24,14 @@ class SelectInvestmentScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: SimpleKidAppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: TurfitColors.whiteDark,
+            size: 20.sp,
+          ),
+          onPressed: () => Get.back(),
+        ),
         title: '📈 Pick an Investment',
         automaticallyImplyLeading: true,
       ),

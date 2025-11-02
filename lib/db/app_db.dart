@@ -38,6 +38,7 @@ class Profiles extends Table {
   TextColumn get name => text().nullable()();
   TextColumn get imagePath => text().nullable()();
   DateTimeColumn get dob => dateTime().nullable()();
+  TextColumn get gender => text().nullable()();
 
   @override
   Set<Column<Object>>? get primaryKey => {id};
@@ -48,7 +49,7 @@ class AppDb extends _$AppDb {
   AppDb() : super(_openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -133,6 +134,12 @@ class AppDb extends _$AppDb {
         await m.database.customStatement('DROP TABLE savings;');
         await m.database.customStatement(
           'ALTER TABLE savings_new RENAME TO savings;',
+        );
+      }
+      if (from < 6) {
+        // Add gender column to profiles table
+        await m.database.customStatement(
+          'ALTER TABLE profiles ADD COLUMN gender TEXT;',
         );
       }
     },

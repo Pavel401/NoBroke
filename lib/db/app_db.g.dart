@@ -603,8 +603,17 @@ class $ProfilesTable extends Profiles with TableInfo<$ProfilesTable, Profile> {
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _genderMeta = const VerificationMeta('gender');
   @override
-  List<GeneratedColumn> get $columns => [id, name, imagePath, dob];
+  late final GeneratedColumn<String> gender = GeneratedColumn<String>(
+    'gender',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, name, imagePath, dob, gender];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -638,6 +647,12 @@ class $ProfilesTable extends Profiles with TableInfo<$ProfilesTable, Profile> {
         dob.isAcceptableOrUnknown(data['dob']!, _dobMeta),
       );
     }
+    if (data.containsKey('gender')) {
+      context.handle(
+        _genderMeta,
+        gender.isAcceptableOrUnknown(data['gender']!, _genderMeta),
+      );
+    }
     return context;
   }
 
@@ -663,6 +678,10 @@ class $ProfilesTable extends Profiles with TableInfo<$ProfilesTable, Profile> {
         DriftSqlType.dateTime,
         data['${effectivePrefix}dob'],
       ),
+      gender: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}gender'],
+      ),
     );
   }
 
@@ -677,7 +696,14 @@ class Profile extends DataClass implements Insertable<Profile> {
   final String? name;
   final String? imagePath;
   final DateTime? dob;
-  const Profile({required this.id, this.name, this.imagePath, this.dob});
+  final String? gender;
+  const Profile({
+    required this.id,
+    this.name,
+    this.imagePath,
+    this.dob,
+    this.gender,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -691,6 +717,9 @@ class Profile extends DataClass implements Insertable<Profile> {
     if (!nullToAbsent || dob != null) {
       map['dob'] = Variable<DateTime>(dob);
     }
+    if (!nullToAbsent || gender != null) {
+      map['gender'] = Variable<String>(gender);
+    }
     return map;
   }
 
@@ -702,6 +731,9 @@ class Profile extends DataClass implements Insertable<Profile> {
           ? const Value.absent()
           : Value(imagePath),
       dob: dob == null && nullToAbsent ? const Value.absent() : Value(dob),
+      gender: gender == null && nullToAbsent
+          ? const Value.absent()
+          : Value(gender),
     );
   }
 
@@ -715,6 +747,7 @@ class Profile extends DataClass implements Insertable<Profile> {
       name: serializer.fromJson<String?>(json['name']),
       imagePath: serializer.fromJson<String?>(json['imagePath']),
       dob: serializer.fromJson<DateTime?>(json['dob']),
+      gender: serializer.fromJson<String?>(json['gender']),
     );
   }
   @override
@@ -725,6 +758,7 @@ class Profile extends DataClass implements Insertable<Profile> {
       'name': serializer.toJson<String?>(name),
       'imagePath': serializer.toJson<String?>(imagePath),
       'dob': serializer.toJson<DateTime?>(dob),
+      'gender': serializer.toJson<String?>(gender),
     };
   }
 
@@ -733,11 +767,13 @@ class Profile extends DataClass implements Insertable<Profile> {
     Value<String?> name = const Value.absent(),
     Value<String?> imagePath = const Value.absent(),
     Value<DateTime?> dob = const Value.absent(),
+    Value<String?> gender = const Value.absent(),
   }) => Profile(
     id: id ?? this.id,
     name: name.present ? name.value : this.name,
     imagePath: imagePath.present ? imagePath.value : this.imagePath,
     dob: dob.present ? dob.value : this.dob,
+    gender: gender.present ? gender.value : this.gender,
   );
   Profile copyWithCompanion(ProfilesCompanion data) {
     return Profile(
@@ -745,6 +781,7 @@ class Profile extends DataClass implements Insertable<Profile> {
       name: data.name.present ? data.name.value : this.name,
       imagePath: data.imagePath.present ? data.imagePath.value : this.imagePath,
       dob: data.dob.present ? data.dob.value : this.dob,
+      gender: data.gender.present ? data.gender.value : this.gender,
     );
   }
 
@@ -754,13 +791,14 @@ class Profile extends DataClass implements Insertable<Profile> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('imagePath: $imagePath, ')
-          ..write('dob: $dob')
+          ..write('dob: $dob, ')
+          ..write('gender: $gender')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, imagePath, dob);
+  int get hashCode => Object.hash(id, name, imagePath, dob, gender);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -768,7 +806,8 @@ class Profile extends DataClass implements Insertable<Profile> {
           other.id == this.id &&
           other.name == this.name &&
           other.imagePath == this.imagePath &&
-          other.dob == this.dob);
+          other.dob == this.dob &&
+          other.gender == this.gender);
 }
 
 class ProfilesCompanion extends UpdateCompanion<Profile> {
@@ -776,29 +815,34 @@ class ProfilesCompanion extends UpdateCompanion<Profile> {
   final Value<String?> name;
   final Value<String?> imagePath;
   final Value<DateTime?> dob;
+  final Value<String?> gender;
   const ProfilesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.imagePath = const Value.absent(),
     this.dob = const Value.absent(),
+    this.gender = const Value.absent(),
   });
   ProfilesCompanion.insert({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.imagePath = const Value.absent(),
     this.dob = const Value.absent(),
+    this.gender = const Value.absent(),
   });
   static Insertable<Profile> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? imagePath,
     Expression<DateTime>? dob,
+    Expression<String>? gender,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (imagePath != null) 'image_path': imagePath,
       if (dob != null) 'dob': dob,
+      if (gender != null) 'gender': gender,
     });
   }
 
@@ -807,12 +851,14 @@ class ProfilesCompanion extends UpdateCompanion<Profile> {
     Value<String?>? name,
     Value<String?>? imagePath,
     Value<DateTime?>? dob,
+    Value<String?>? gender,
   }) {
     return ProfilesCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       imagePath: imagePath ?? this.imagePath,
       dob: dob ?? this.dob,
+      gender: gender ?? this.gender,
     );
   }
 
@@ -831,6 +877,9 @@ class ProfilesCompanion extends UpdateCompanion<Profile> {
     if (dob.present) {
       map['dob'] = Variable<DateTime>(dob.value);
     }
+    if (gender.present) {
+      map['gender'] = Variable<String>(gender.value);
+    }
     return map;
   }
 
@@ -840,7 +889,8 @@ class ProfilesCompanion extends UpdateCompanion<Profile> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('imagePath: $imagePath, ')
-          ..write('dob: $dob')
+          ..write('dob: $dob, ')
+          ..write('gender: $gender')
           ..write(')'))
         .toString();
   }
@@ -1701,6 +1751,7 @@ typedef $$ProfilesTableCreateCompanionBuilder =
       Value<String?> name,
       Value<String?> imagePath,
       Value<DateTime?> dob,
+      Value<String?> gender,
     });
 typedef $$ProfilesTableUpdateCompanionBuilder =
     ProfilesCompanion Function({
@@ -1708,6 +1759,7 @@ typedef $$ProfilesTableUpdateCompanionBuilder =
       Value<String?> name,
       Value<String?> imagePath,
       Value<DateTime?> dob,
+      Value<String?> gender,
     });
 
 class $$ProfilesTableFilterComposer extends Composer<_$AppDb, $ProfilesTable> {
@@ -1735,6 +1787,11 @@ class $$ProfilesTableFilterComposer extends Composer<_$AppDb, $ProfilesTable> {
 
   ColumnFilters<DateTime> get dob => $composableBuilder(
     column: $table.dob,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get gender => $composableBuilder(
+    column: $table.gender,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1767,6 +1824,11 @@ class $$ProfilesTableOrderingComposer
     column: $table.dob,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get gender => $composableBuilder(
+    column: $table.gender,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ProfilesTableAnnotationComposer
@@ -1789,6 +1851,9 @@ class $$ProfilesTableAnnotationComposer
 
   GeneratedColumn<DateTime> get dob =>
       $composableBuilder(column: $table.dob, builder: (column) => column);
+
+  GeneratedColumn<String> get gender =>
+      $composableBuilder(column: $table.gender, builder: (column) => column);
 }
 
 class $$ProfilesTableTableManager
@@ -1823,11 +1888,13 @@ class $$ProfilesTableTableManager
                 Value<String?> name = const Value.absent(),
                 Value<String?> imagePath = const Value.absent(),
                 Value<DateTime?> dob = const Value.absent(),
+                Value<String?> gender = const Value.absent(),
               }) => ProfilesCompanion(
                 id: id,
                 name: name,
                 imagePath: imagePath,
                 dob: dob,
+                gender: gender,
               ),
           createCompanionCallback:
               ({
@@ -1835,11 +1902,13 @@ class $$ProfilesTableTableManager
                 Value<String?> name = const Value.absent(),
                 Value<String?> imagePath = const Value.absent(),
                 Value<DateTime?> dob = const Value.absent(),
+                Value<String?> gender = const Value.absent(),
               }) => ProfilesCompanion.insert(
                 id: id,
                 name: name,
                 imagePath: imagePath,
                 dob: dob,
+                gender: gender,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

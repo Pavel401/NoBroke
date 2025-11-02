@@ -85,6 +85,14 @@ class _EnterPriceScreenState extends State<EnterPriceScreen> {
       appBar: SimpleKidAppBar(
         title: '💰 Enter Price',
         automaticallyImplyLeading: true,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: TurfitColors.whiteDark,
+            size: 20.sp,
+          ),
+          onPressed: () => Get.back(),
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -374,7 +382,7 @@ class _EnterPriceScreenState extends State<EnterPriceScreen> {
               ).animate(delay: 1000.ms).fadeIn().slideY(begin: 0.1),
 
               SizedBox(height: 3.h),
-
+              Expanded(child: SizedBox(height: 3.h)),
               // Continue Button
               SizedBox(
                 width: double.infinity,

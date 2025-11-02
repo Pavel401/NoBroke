@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:drift/drift.dart' as d;
 
 import '../../db/app_db.dart';
+import '../colors.dart';
+import '../components/awesome_snackbar_helper.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,10 +17,20 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _imageCtrl = TextEditingController();
   DateTime? _dob;
+  String? _gender;
   bool _loading = true;
+  bool _saving = false;
+
+  final List<String> _genderOptions = [
+    'Male',
+    'Female',
+    'Other',
+    'Prefer not to say',
+  ];
 
   @override
   void initState() {
@@ -34,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _nameCtrl.text = p.name ?? '';
       _imageCtrl.text = p.imagePath ?? '';
       _dob = p.dob;
+      _gender = p.gender;
     }
     setState(() => _loading = false);
   }
@@ -45,6 +59,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+  int? get _calculatedAge {
+    if (_dob == null) return null;
+    final now = DateTime.now();
+    int age = now.year - _dob!.year;
+    if (now.month < _dob!.month ||
+        (now.month == _dob!.month && now.day < _dob!.day)) {
+      age--;
+    }
+    return age;
+  }
+
   Future<void> _pickDob() async {
     final init = _dob ?? DateTime(2008, 1, 1);
     final picked = await showDatePicker(
@@ -52,77 +77,271 @@ class _ProfileScreenState extends State<ProfileScreen> {
       initialDate: init,
       firstDate: DateTime(1990),
       lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: TurfitColors.primary(context),
+              onPrimary: TurfitColors.white(context),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null) setState(() => _dob = picked);
   }
 
   Future<void> _save() async {
-    final db = Get.find<AppDb>();
-    final name = _nameCtrl.text.trim();
-    final img = _imageCtrl.text.trim();
-    await db.upsertProfile(
-      ProfilesCompanion(
-        id: const d.Value(1),
-        name: d.Value<String?>(name.isEmpty ? null : name),
-        imagePath: d.Value<String?>(img.isEmpty ? null : img),
-        dob: d.Value<DateTime?>(_dob),
-      ),
-    );
-    Get.snackbar('Saved', 'Profile updated');
-    if (mounted) Navigator.of(context).pop();
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _saving = true);
+
+    try {
+      final db = Get.find<AppDb>();
+      final name = _nameCtrl.text.trim();
+      final img = _imageCtrl.text.trim();
+
+      await db.upsertProfile(
+        ProfilesCompanion(
+          id: const d.Value(1),
+          name: d.Value<String?>(name.isEmpty ? null : name),
+          imagePath: d.Value<String?>(img.isEmpty ? null : img),
+          dob: d.Value<DateTime?>(_dob),
+          gender: d.Value<String?>(_gender),
+        ),
+      );
+
+      AwesomeSnackbarHelper.showSuccess(
+        context,
+        'Profile Saved! 🎉',
+        'Your information has been updated successfully',
+      );
+
+      if (mounted) Navigator.of(context).pop();
+    } catch (e) {
+      AwesomeSnackbarHelper.showError(
+        context,
+        'Save Failed',
+        'There was an error saving your profile. Please try again.',
+      );
+    } finally {
+      setState(() => _saving = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            color: TurfitColors.primary(context),
+          ),
+        ),
+      );
     }
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        title: Text(
+          'Profile',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(6.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                _avatarPreview(_imageCtrl.text, _nameCtrl.text),
-                SizedBox(width: 4.w),
-                Expanded(
-                  child: TextField(
-                    controller: _nameCtrl,
-                    decoration: const InputDecoration(labelText: 'Name'),
-                    onChanged: (_) => setState(() {}),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 2.h),
-            TextField(
-              controller: _imageCtrl,
-              decoration: const InputDecoration(labelText: 'Image path or URL'),
-              onChanged: (_) => setState(() {}),
-            ),
-            SizedBox(height: 2.h),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    _dob == null
-                        ? 'DOB: Not set'
-                        : 'DOB: ${DateFormat('yMMMd').format(_dob!)}',
-                  ),
-                ),
-                TextButton(onPressed: _pickDob, child: const Text('Pick DOB')),
-              ],
-            ),
-            SizedBox(height: 3.h),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _save,
-                child: const Text('Save'),
+        padding: EdgeInsets.all(4.w),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              // Avatar Section
+              _buildAvatar(),
+              SizedBox(height: 3.h),
+
+              // Name Field
+              _buildTextField(
+                controller: _nameCtrl,
+                label: 'Full Name',
+                icon: Icons.person_outline,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter your name';
+                  }
+                  return null;
+                },
+                onChanged: (value) => setState(() {}),
               ),
+              SizedBox(height: 2.h),
+
+              // Date of Birth Field
+              _buildDateField(),
+              SizedBox(height: 2.h),
+
+              // Gender Field
+              _buildGenderField(),
+              SizedBox(height: 2.h),
+
+              // // Image URL Field (Optional)
+              // _buildTextField(
+              //   controller: _imageCtrl,
+              //   label: 'Profile Image URL (Optional)',
+              //   icon: Icons.image_outlined,
+              //   onChanged: (value) => setState(() {}),
+              // ),
+              // SizedBox(height: 4.h),
+
+              // Save Button
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _saving ? null : _save,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TurfitColors.primary(context),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: _saving
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          'Save Profile',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAvatar() {
+    final path = _imageCtrl.text.trim();
+    final name = _nameCtrl.text.trim();
+    final initials = name.isNotEmpty
+        ? name
+              .split(RegExp(r"\s+"))
+              .map((e) => e.isNotEmpty ? e[0] : '')
+              .take(2)
+              .join()
+              .toUpperCase()
+        : '?';
+
+    return CircleAvatar(
+      radius: 40,
+      backgroundColor: TurfitColors.primary(context).withOpacity(0.2),
+      backgroundImage: path.startsWith('http') ? NetworkImage(path) : null,
+      child: path.startsWith('http')
+          ? null
+          : Text(
+              initials,
+              style: GoogleFonts.poppins(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: TurfitColors.primary(context),
+              ),
+            ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    String? Function(String?)? validator,
+    void Function(String)? onChanged,
+  }) {
+    return TextFormField(
+      controller: controller,
+      validator: validator,
+      onChanged: onChanged,
+      style: GoogleFonts.poppins(),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: GoogleFonts.poppins(),
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: TurfitColors.primary(context)),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateField() {
+    return InkWell(
+      onTap: _pickDob,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.calendar_today_outlined, color: Colors.grey.shade600),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Date of Birth',
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _dob == null
+                        ? 'Select your birthday'
+                        : DateFormat('MMM dd, yyyy').format(_dob!),
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: _dob == null
+                          ? Colors.grey.shade500
+                          : Colors.black87,
+                    ),
+                  ),
+                  if (_calculatedAge != null)
+                    Text(
+                      '$_calculatedAge years old',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        color: TurfitColors.primary(context),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.grey.shade400,
             ),
           ],
         ),
@@ -130,23 +349,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _avatarPreview(String path, String name) {
-    final initials = (name.isNotEmpty)
-        ? name
-              .trim()
-              .split(RegExp(r"\s+"))
-              .map((e) => e.isNotEmpty ? e[0] : '')
-              .take(2)
-              .join()
-              .toUpperCase()
-        : '?';
-    return CircleAvatar(
-      radius: 28,
-      backgroundColor: Colors.grey.shade300,
-      backgroundImage: path.startsWith('http') ? NetworkImage(path) : null,
-      child: path.startsWith('http')
-          ? null
-          : Text(initials, style: const TextStyle(fontWeight: FontWeight.bold)),
+  Widget _buildGenderField() {
+    return DropdownButtonFormField<String>(
+      initialValue: _gender,
+      decoration: InputDecoration(
+        labelText: 'Gender',
+        labelStyle: GoogleFonts.poppins(),
+        prefixIcon: const Icon(Icons.people_outline),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: TurfitColors.primary(context)),
+        ),
+      ),
+      style: GoogleFonts.poppins(color: Colors.black87),
+      items: _genderOptions.map((String gender) {
+        return DropdownMenuItem<String>(value: gender, child: Text(gender));
+      }).toList(),
+      onChanged: (String? newValue) {
+        setState(() => _gender = newValue);
+      },
+      hint: Text(
+        'Select gender',
+        style: GoogleFonts.poppins(color: Colors.grey.shade500),
+      ),
     );
   }
 }
