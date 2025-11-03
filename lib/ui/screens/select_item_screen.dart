@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:growthapp/ui/components/kid_friendly_app_bar.dart';
+import 'package:what_if/ui/components/kid_friendly_app_bar.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 

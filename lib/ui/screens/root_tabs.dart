@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growthapp/ui/colors.dart';
-import 'package:growthapp/ui/components/kid_friendly_nav_bar.dart';
-import 'package:growthapp/services/audio_service.dart';
+import 'package:what_if/ui/colors.dart';
+import 'package:what_if/ui/components/kid_friendly_nav_bar.dart';
+import 'package:what_if/services/audio_service.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';

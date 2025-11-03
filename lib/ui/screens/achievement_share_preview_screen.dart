@@ -8,7 +8,6 @@ import '../../db/app_db.dart';
 import '../../services/share_service.dart';
 import '../../services/audio_service.dart';
 import '../components/achievement_share_widget.dart';
-import '../components/kid_friendly_app_bar.dart';
 import '../colors.dart';
 
 class AchievementSharePreviewScreen extends StatefulWidget {
@@ -81,11 +80,18 @@ class _AchievementSharePreviewScreenState
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: KidFriendlyAppBar(
-        title: 'Share Achievement',
-        // subtitle: 'Preview and share your progress',
-        showBackButton: true,
-        onBackPressed: () => Navigator.of(context).pop(),
+      appBar: AppBar(
+        title: Text(
+          'Share Achievement',
+          style: GoogleFonts.nunito(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        elevation: 0,
+        centerTitle: true,
+        iconTheme: IconThemeData(color: colorScheme.onSurface),
       ),
       body: SafeArea(
         child: Column(
@@ -240,7 +246,7 @@ class _AchievementSharePreviewScreenState
                               SizedBox(
                                 width: 20.sp,
                                 height: 20.sp,
-                                child: CircularProgressIndicator(
+                                child: const CircularProgressIndicator(
                                   strokeWidth: 2,
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     Colors.white,

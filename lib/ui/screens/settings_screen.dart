@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:growthapp/ui/components/tap_tile.dart';
-import 'package:growthapp/ui/screens/profile_screen.dart';
-import 'package:growthapp/ui/screens/admin_db_viewer_screen.dart';
+import 'package:what_if/ui/components/tap_tile.dart';
+import 'package:what_if/ui/screens/profile_screen.dart';
+import 'package:what_if/ui/screens/admin_db_viewer_screen.dart';
 import 'package:sizer/sizer.dart';
 import 'dart:math';
 
@@ -13,7 +13,7 @@ import '../../services/onboarding_service.dart';
 import '../../services/audio_service.dart';
 import '../../db/app_db.dart';
 import 'package:drift/drift.dart' as d;
-import 'package:growthapp/ui/theme.dart';
+import 'package:what_if/ui/theme.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../components/awesome_snackbar_helper.dart';
 

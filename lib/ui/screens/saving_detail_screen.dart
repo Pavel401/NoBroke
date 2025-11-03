@@ -4,8 +4,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:growthapp/ui/colors.dart';
-import 'package:growthapp/ui/components/kid_friendly_app_bar.dart';
+import 'package:what_if/ui/colors.dart';
+import 'package:what_if/ui/components/kid_friendly_app_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
@@ -35,12 +35,24 @@ class SavingDetailScreen extends StatelessWidget {
       backgroundColor: colorScheme.surface,
       appBar: SimpleKidAppBar(
         title: '💰 Savings Details',
+        leading: IconButton(
+          icon: Icon(
+            Icons.chevron_left,
+            color: TurfitColors.whiteDark,
+            size: 24.sp,
+          ),
+          onPressed: () {
+            AudioService().playButtonClick();
+            Get.back();
+          },
+        ),
         actions: [
           Bounceable(
             onTap: () {
               AudioService().playButtonClick();
               _shareAchievement(context, saving);
             },
+
             child: Container(
               margin: EdgeInsets.only(right: 2.w),
               padding: EdgeInsets.all(2.w),
@@ -49,7 +61,7 @@ class SavingDetailScreen extends StatelessWidget {
               ),
               child: Icon(
                 Icons.share,
-                color: TurfitColors.primaryLight,
+                color: TurfitColors.green(context),
                 size: 20.sp,
               ),
             ),
@@ -66,7 +78,7 @@ class SavingDetailScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                Icons.delete,
+                Icons.delete_outline,
                 color: TurfitColors.errorLight,
                 size: 20.sp,
               ),
