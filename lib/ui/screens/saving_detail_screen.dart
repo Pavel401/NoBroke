@@ -11,7 +11,6 @@ import 'package:lottie/lottie.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../db/app_db.dart';
-import '../../services/share_service.dart';
 import '../../services/audio_service.dart';
 import '../icon_utils.dart';
 import '../components/awesome_snackbar_helper.dart';
@@ -589,79 +588,12 @@ class SavingDetailScreen extends StatelessWidget {
 
   Future<void> _shareAchievement(BuildContext context, Saving saving) async {
     try {
-      HapticFeedback.lightImpact();
-
-      // Show loading indicator
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => Dialog(
-          backgroundColor: Colors.transparent,
-          child: Container(
-            padding: EdgeInsets.all(4.w),
-            decoration: BoxDecoration(
-              color: TurfitColors.white(context),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    TurfitColors.primaryLight,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  'Creating your achievement...',
-                  style: GoogleFonts.nunito(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: TurfitColors.grey700(context),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-
-      // Share the achievement
-      // Get the render box for positioning the share dialog
-      final RenderBox? box = context.findRenderObject() as RenderBox?;
-      final Rect? sharePositionOrigin = box != null
-          ? Rect.fromLTWH(
-              box.localToGlobal(Offset.zero).dx,
-              box.localToGlobal(Offset.zero).dy,
-              box.size.width,
-              box.size.height,
-            )
-          : null;
-
-      await ShareService().shareAchievement(
-        context,
-        saving,
-        sharePositionOrigin: sharePositionOrigin,
-      );
-
-      // Close loading dialog
-      Navigator.of(context).pop();
-
-      AwesomeSnackbarHelper.showSuccess(
-        context,
-        'Achievement Shared! 🎉',
-        'Your investment success has been shared!',
-      );
+      // Navigate to achievement share preview screen
+      Get.toNamed('/achievement-share-preview', arguments: saving);
     } catch (e) {
-      // Close loading dialog if still open
-      if (Navigator.canPop(context)) {
-        Navigator.of(context).pop();
-      }
-
-      AwesomeSnackbarHelper.showError(
-        context,
-        'Share Failed',
-        'Could not share achievement. Please try again.',
+      // Handle error silently or show a simple message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not share achievement')),
       );
     }
   }
