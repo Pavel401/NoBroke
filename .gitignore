@@ -43,3 +43,17 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Release signing files (NEVER commit these)
+android/key.properties
+android/app/*.keystore
+android/app/*.jks
+
+# iOS signing files
+ios/Runner.xcodeproj/project.xcworkspace/xcuserdata/
+ios/Runner.xcodeproj/xcuserdata/
+ios/Pods/
+
+# Build optimization files
+build/app/outputs/symbols/
+build/ios/symbols/

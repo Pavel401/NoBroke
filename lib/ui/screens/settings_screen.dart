@@ -8,7 +8,6 @@ import 'package:sizer/sizer.dart';
 import 'dart:math';
 
 import '../../data/investments.dart';
-import '../../data/default_items.dart';
 import '../../services/market_service.dart';
 import '../../services/onboarding_service.dart';
 import '../../services/audio_service.dart';
@@ -261,7 +260,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final img = _imageCtrl.text.trim();
     await db.upsertProfile(
       ProfilesCompanion(
-        id: d.Value(1),
+        id: const d.Value(1),
         name: d.Value<String?>(name.isEmpty ? null : name),
         imagePath: d.Value<String?>(img.isEmpty ? null : img),
         dob: d.Value<DateTime?>(_dob),
@@ -272,7 +271,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Get.find<ThemeProvider>();
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -314,7 +312,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       leadingIcon: Icons.person_outline,
                       onTap: () async {
                         AudioService().playButtonClick();
-                        await Get.to(() => ProfileScreen());
+                        await Get.to(() => const ProfileScreen());
                         setState(() {});
                       },
                     ),

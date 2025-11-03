@@ -1,2 +1,16 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
 #include "Generated.xcconfig"
+
+// Release optimizations
+FLUTTER_BUILD_MODE=release
+TREE_SHAKE_ICONS=true
+DART_OBFUSCATION=true
+SPLIT_DEBUG_INFO=build/app/outputs/symbols/
+
+// iOS Release optimizations
+ENABLE_BITCODE=NO
+SWIFT_COMPILATION_MODE=wholemodule
+SWIFT_OPTIMIZATION_LEVEL=-O
+GCC_OPTIMIZATION_LEVEL=s
+LLVM_LTO=YES
+DEAD_CODE_STRIPPING=YES

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bounceable/flutter_bounceable.dart';
-import 'package:growthapp/ui/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../db/app_db.dart';
-import '../../services/share_service.dart';
 import '../../services/audio_service.dart';
 import 'package:get/get.dart';
 import '../icon_utils.dart';
@@ -32,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
-      appBar: KidFriendlyAppBar(
+      appBar: const KidFriendlyAppBar(
         title: '💰 Your Smart Savings',
         // trailing: StreamBuilder<List<Saving>>(
         //   stream: db.watchSavings(),
