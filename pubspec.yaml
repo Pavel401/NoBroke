@@ -43,6 +43,7 @@ dependencies:
   flutter_animate: ^4.5.2
   flutter_bounceable: ^1.2.0
   flutter_confetti: ^0.5.1
+  flutter_launcher_icons: ^0.14.4
   get: ^4.6.6
   google_fonts: ^6.3.2
   http: ^1.2.2
@@ -77,5 +78,6 @@ flutter:
   assets:
     - assets/lotties/
     - assets/audio/
+    - assets/png/
   # Google Fonts are automatically managed by the google_fonts package
   # No manual font declarations needed
