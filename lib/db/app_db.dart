@@ -173,6 +173,21 @@ class AppDb extends _$AppDb {
   Future<int> deleteSaving(int id) =>
       (delete(savings)..where((tbl) => tbl.id.equals(id))).go();
 
+  Future<void> updateSaving(
+    int id, {
+    required double finalValue,
+    required double returnPct,
+  }) async {
+    await (update(savings)..where((tbl) => tbl.id.equals(id))).write(
+      SavingsCompanion(
+        finalValue: Value(finalValue),
+        returnPct: Value(returnPct),
+      ),
+    );
+  }
+
+  Future<List<Saving>> getAllSavings() => select(savings).get();
+
   // Profile ops
   Future<Profile?> getProfile() async {
     final rows = await select(profiles).get();

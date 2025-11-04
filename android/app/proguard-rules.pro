@@ -1,66 +1,61 @@
-# Flutter related rules
+# Add project specific ProGuard rules here.
+# You can control the set of applied configuration files using the
+# proguardFiles setting in build.gradle.
+#
+# For more details, see
+#   http://developer.android.com/guide/developing/tools/proguard.html
+
+# If your project uses WebView with JS, uncomment the following
+# and specify the fully qualified class name to the JavaScript interface
+# class:
+#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+#   public *;
+#}
+
+# Uncomment this to preserve the line number information for
+# debugging stack traces.
+#-keepattributes SourceFile,LineNumberTable
+
+# If you keep the line number information, uncomment this to
+# hide the original source file name.
+#-renamesourcefileattribute SourceFile
+
+# Flutter specific rules
 -keep class io.flutter.app.** { *; }
 -keep class io.flutter.plugin.**  { *; }
 -keep class io.flutter.util.**  { *; }
 -keep class io.flutter.view.**  { *; }
 -keep class io.flutter.**  { *; }
 -keep class io.flutter.plugins.**  { *; }
-
-# Dart related rules
--keep class androidx.lifecycle.DefaultLifecycleObserver
-
-# Keep Flutter Engine
 -dontwarn io.flutter.embedding.**
 
-# Google Play Services
+# Firebase/Google Play Services
+-keep class com.google.firebase.** { *; }
 -keep class com.google.android.gms.** { *; }
+-dontwarn com.google.firebase.**
 -dontwarn com.google.android.gms.**
 
-# Audio players
--keep class xyz.luan.audioplayers.** { *; }
+# SQLite
+-keep class org.sqlite.** { *; }
+-keep class org.sqlite.database.** { *; }
 
-# Share Plus
--keep class dev.fluttercommunity.plus.share.** { *; }
-
-# HTTP
--keepattributes Signature
--keepattributes *Annotation*
--keep class okhttp3.** { *; }
--keep interface okhttp3.** { *; }
--dontwarn okhttp3.**
-
-# Gson (if used indirectly)
--keepattributes Signature
--keepattributes *Annotation*
--dontwarn sun.misc.**
--keep class com.google.gson.** { *; }
--keep class * implements com.google.gson.TypeAdapterFactory
--keep class * implements com.google.gson.JsonSerializer
--keep class * implements com.google.gson.JsonDeserializer
-
-# Package info
--keep class io.flutter.plugins.packageinfo.** { *; }
-
-# Path provider
--keep class io.flutter.plugins.pathprovider.** { *; }
-
-# Shared preferences
--keep class io.flutter.plugins.sharedpreferences.** { *; }
-
-# Lottie
--keep class com.airbnb.lottie.** { *; }
-
-# General optimization
--optimizationpasses 5
--allowaccessmodification
--dontpreverify
-
-# Remove logging in release
--assumenosideeffects class android.util.Log {
-    public static boolean isLoggable(java.lang.String, int);
-    public static int v(...);
-    public static int i(...);
-    public static int w(...);
-    public static int d(...);
-    public static int e(...);
+# Keep native method names
+-keepclasseswithmembernames class * {
+    native <methods>;
 }
+
+# Keep custom application class
+-keep public class * extends android.app.Application
+
+# Keep R class and its inner classes
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+
+# General Android rules
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.preference.Preference
+-keep public class com.android.vending.licensing.ILicensingService

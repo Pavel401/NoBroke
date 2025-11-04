@@ -1,4 +1,4 @@
-package com.example.growthapp
+package com.whatif.app
 
 import io.flutter.embedding.android.FlutterActivity
 

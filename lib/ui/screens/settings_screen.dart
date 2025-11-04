@@ -9,11 +9,11 @@ import 'dart:math';
 
 import '../../data/investments.dart';
 import '../../services/market_service.dart';
+import '../../services/savings_recalculation_service.dart';
 import '../../services/onboarding_service.dart';
 import '../../services/audio_service.dart';
 import '../../db/app_db.dart';
 import 'package:drift/drift.dart' as d;
-import 'package:what_if/ui/theme.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../components/awesome_snackbar_helper.dart';
 
@@ -29,10 +29,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _syncing = false;
   bool _generatingDummyData = false;
   double _progress = 0;
-  final _nameCtrl = TextEditingController();
-  final _imageCtrl = TextEditingController();
-  DateTime? _dob;
-  final bool _loadingProfile = true;
   String _appVersion = '';
 
   // Dummy item data for generating test entries
@@ -239,34 +235,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _syncing = true;
       _progress = 0;
     });
-    final syms = investments.map((e) => e.symbol).toList();
-    for (var i = 0; i < syms.length; i++) {
-      await _service.fetchOneYearPrices(syms[i], forceRefresh: true);
-      setState(() => _progress = (i + 1) / syms.length);
-    }
-    if (mounted) {
-      setState(() => _syncing = false);
-      AwesomeSnackbarHelper.showSuccess(
-        context,
-        'Sync complete',
-        'Market data updated',
-      );
-    }
-  }
 
-  Future<void> _saveProfile() async {
-    final db = Get.find<AppDb>();
-    final name = _nameCtrl.text.trim();
-    final img = _imageCtrl.text.trim();
-    await db.upsertProfile(
-      ProfilesCompanion(
-        id: const d.Value(1),
-        name: d.Value<String?>(name.isEmpty ? null : name),
-        imagePath: d.Value<String?>(img.isEmpty ? null : img),
-        dob: d.Value<DateTime?>(_dob),
-      ),
-    );
-    AwesomeSnackbarHelper.showSuccess(context, 'Saved', 'Profile updated');
+    try {
+      final syms = investments.map((e) => e.symbol).toList();
+
+      // Step 1: Sync market data
+      for (var i = 0; i < syms.length; i++) {
+        await _service.fetchOneYearPrices(syms[i], forceRefresh: true);
+        setState(
+          () => _progress = (i + 1) / syms.length * 0.8,
+        ); // 80% for market data sync
+      }
+
+      // Step 2: Recalculate savings based on new market data
+      final db = Get.find<AppDb>();
+      final recalculationService = SavingsRecalculationService(db, _service);
+      final updatedCount = await recalculationService.recalculateAllSavings();
+
+      setState(() => _progress = 1.0); // 100% complete
+
+      if (mounted) {
+        setState(() => _syncing = false);
+        AwesomeSnackbarHelper.showSuccess(
+          context,
+          'Sync complete',
+          'Market data updated and ${updatedCount} savings recalculated',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _syncing = false);
+        AwesomeSnackbarHelper.showError(
+          context,
+          'Sync failed',
+          'Failed to update market data: $e',
+        );
+      }
+    }
   }
 
   @override
