@@ -73,11 +73,8 @@ If it's not a transaction SMS, return: {"isTransaction": false, "confidence": 0.
       final jsonEnd = response.lastIndexOf('}') + 1;
       if (jsonStart == -1 || jsonEnd == 0) return null;
 
-      final jsonStr = response.substring(jsonStart, jsonEnd);
-      // Simple parsing - in production, use dart:convert
-
-      // For now, return a basic parsed transaction
-      // You should implement proper JSON parsing here
+      // Parse the JSON response - for now, return a basic parsed transaction
+      // You should implement proper JSON parsing here using dart:convert
       return ParsedTransaction(isTransaction: false, confidence: 0.0);
     } catch (e) {
       print('Error parsing Gemini response: $e');
