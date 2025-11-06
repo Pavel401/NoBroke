@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/transaction_entity.dart';
-import '../../domain/entities/bank_account_entity.dart';
 import '../../domain/usecases/transaction_usecases.dart';
 import '../../domain/usecases/account_usecases.dart';
 import '../../domain/repositories/transaction_repository.dart';
@@ -22,6 +21,7 @@ class TransactionController extends GetxController {
   final DeleteTransactionUseCase _deleteTransactionUseCase;
   final GetCategoryWiseExpensesUseCase _getCategoryWiseExpensesUseCase;
   final GetTotalAmountByTypeUseCase _getTotalAmountByTypeUseCase;
+  final UpdateAccountBalanceUseCase _updateAccountBalanceUseCase;
   final SmsService _smsService;
   final GeminiService _geminiService;
 
@@ -35,6 +35,7 @@ class TransactionController extends GetxController {
     this._deleteTransactionUseCase,
     this._getCategoryWiseExpensesUseCase,
     this._getTotalAmountByTypeUseCase,
+    this._updateAccountBalanceUseCase,
     this._smsService,
     this._geminiService,
   );
@@ -114,6 +115,12 @@ class TransactionController extends GetxController {
       _errorMessage.value = '';
 
       await _addTransactionUseCase(transaction);
+
+      // Update account balance if accountId is provided and it's not a transfer between own accounts
+      if (transaction.accountId != null) {
+        await _updateAccountBalance(transaction);
+      }
+
       await loadTransactions();
       await loadStatistics();
 
@@ -146,8 +153,21 @@ class TransactionController extends GetxController {
       _isLoading.value = true;
       _errorMessage.value = '';
 
+      // Get the original transaction to calculate balance difference
+      final originalTransaction = _transactions.firstWhereOrNull(
+        (t) => t.id == transaction.id,
+      );
+
       final success = await _updateTransactionUseCase(transaction);
       if (success) {
+        // Update account balance if needed
+        if (originalTransaction != null && transaction.accountId != null) {
+          await _updateAccountBalanceAfterEdit(
+            originalTransaction,
+            transaction,
+          );
+        }
+
         await loadTransactions();
         await loadStatistics();
         if (context != null) {
@@ -174,13 +194,55 @@ class TransactionController extends GetxController {
     }
   }
 
+  /// Update account balance when a transaction is edited
+  Future<void> _updateAccountBalanceAfterEdit(
+    TransactionEntity originalTransaction,
+    TransactionEntity updatedTransaction,
+  ) async {
+    // Reverse the original transaction's effect on the account
+    if (originalTransaction.accountId != null) {
+      double reverseChange = 0.0;
+      switch (originalTransaction.type) {
+        case TransactionType.credit:
+          reverseChange = -originalTransaction.amount;
+          break;
+        case TransactionType.debit:
+          if (originalTransaction.category != TransactionCategory.transfer) {
+            reverseChange = originalTransaction.amount;
+          }
+          break;
+        case TransactionType.transfer:
+          reverseChange = originalTransaction.amount;
+          break;
+      }
+
+      if (reverseChange != 0.0) {
+        await _updateAccountBalanceUseCase.execute(
+          originalTransaction.accountId!,
+          reverseChange,
+        );
+      }
+    }
+
+    // Apply the updated transaction's effect on the account
+    await _updateAccountBalance(updatedTransaction);
+  }
+
   Future<void> deleteTransaction(String id, [BuildContext? context]) async {
     try {
       _isLoading.value = true;
       _errorMessage.value = '';
 
+      // Get the transaction to reverse its balance effect
+      final transaction = _transactions.firstWhereOrNull((t) => t.id == id);
+
       final success = await _deleteTransactionUseCase(id);
       if (success) {
+        // Reverse the transaction's effect on account balance
+        if (transaction != null && transaction.accountId != null) {
+          await _reverseAccountBalance(transaction);
+        }
+
         await loadTransactions();
         await loadStatistics();
         if (context != null) {
@@ -204,6 +266,35 @@ class TransactionController extends GetxController {
       }
     } finally {
       _isLoading.value = false;
+    }
+  }
+
+  /// Reverse account balance when a transaction is deleted
+  Future<void> _reverseAccountBalance(TransactionEntity transaction) async {
+    if (transaction.accountId == null) return;
+
+    double reverseChange = 0.0;
+
+    switch (transaction.type) {
+      case TransactionType.credit:
+        reverseChange = -transaction.amount; // Remove the added money
+        break;
+      case TransactionType.debit:
+        if (transaction.category != TransactionCategory.transfer) {
+          reverseChange = transaction.amount; // Add back the removed money
+        }
+        break;
+      case TransactionType.transfer:
+        reverseChange =
+            transaction.amount; // Add back the transferred money to source
+        break;
+    }
+
+    if (reverseChange != 0.0) {
+      await _updateAccountBalanceUseCase.execute(
+        transaction.accountId!,
+        reverseChange,
+      );
     }
   }
 
@@ -424,9 +515,9 @@ class TransactionController extends GetxController {
 
   /// Infer transaction category based on merchant name
   TransactionCategory _inferCategory(String? merchant, TransactionType type) {
-    // For transfers, always return other category
+    // For transfers, always return transfer category
     if (type == TransactionType.transfer) {
-      return TransactionCategory.other;
+      return TransactionCategory.transfer;
     }
 
     if (merchant == null) {
@@ -564,6 +655,7 @@ class TransactionController extends GetxController {
     required TransactionCategory category,
     String? location,
     List<String>? photos,
+    String? accountId,
   }) async {
     final transaction = TransactionEntity(
       id: const Uuid().v4(),
@@ -575,9 +667,103 @@ class TransactionController extends GetxController {
       location: location,
       category: category,
       photos: photos ?? [],
+      accountId: accountId,
     );
 
     await addTransaction(transaction);
+  }
+
+  /// Handle transfer between own accounts
+  Future<void> addTransferTransaction({
+    required String title,
+    required String description,
+    required double amount,
+    required String fromAccountId,
+    required String toAccountId,
+    String? location,
+    List<String>? photos,
+    BuildContext? context,
+  }) async {
+    try {
+      _isLoading.value = true;
+      _errorMessage.value = '';
+
+      // Create transfer transaction
+      final transaction = TransactionEntity(
+        id: const Uuid().v4(),
+        date: DateTime.now(),
+        type: TransactionType.transfer,
+        title: title,
+        description: description,
+        amount: amount,
+        location: location,
+        category: TransactionCategory.transfer,
+        photos: photos ?? [],
+        accountId: fromAccountId, // Source account
+      );
+
+      // Add transaction
+      await _addTransactionUseCase(transaction);
+
+      // Update account balances
+      // Deduct from source account
+      await _updateAccountBalanceUseCase.execute(fromAccountId, -amount);
+
+      // Add to destination account
+      await _updateAccountBalanceUseCase.execute(toAccountId, amount);
+
+      await loadTransactions();
+      await loadStatistics();
+
+      if (context != null) {
+        UIHelpers.showSnackbar(
+          context,
+          message: 'Transfer completed successfully',
+          type: SnackbarType.success,
+        );
+      }
+    } catch (e) {
+      _errorMessage.value = 'Failed to process transfer: $e';
+      if (context != null) {
+        UIHelpers.showSnackbar(
+          context,
+          message: 'Failed to process transfer',
+          type: SnackbarType.error,
+        );
+      }
+    } finally {
+      _isLoading.value = false;
+    }
+  }
+
+  /// Update account balance based on transaction type
+  Future<void> _updateAccountBalance(TransactionEntity transaction) async {
+    if (transaction.accountId == null) return;
+
+    double balanceChange = 0.0;
+
+    switch (transaction.type) {
+      case TransactionType.credit:
+        balanceChange = transaction.amount; // Add money to account
+        break;
+      case TransactionType.debit:
+        if (transaction.category != TransactionCategory.transfer) {
+          balanceChange = -transaction.amount; // Remove money from account
+        }
+        break;
+      case TransactionType.transfer:
+        // For transfers, we'll handle them separately
+        // This is for transfers between different users or external transfers
+        balanceChange = -transaction.amount; // Remove money from source account
+        break;
+    }
+
+    if (balanceChange != 0.0) {
+      await _updateAccountBalanceUseCase.execute(
+        transaction.accountId!,
+        balanceChange,
+      );
+    }
   }
 
   Future<void> resetAllData() async {
