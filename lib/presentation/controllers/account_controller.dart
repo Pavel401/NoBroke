@@ -211,4 +211,24 @@ class AccountController extends GetxController {
       return null;
     }
   }
+
+  Future<void> updateAccountBalance(
+    String accountId,
+    double amount, [
+    BuildContext? context,
+  ]) async {
+    try {
+      await _updateAccountBalanceUseCase.execute(accountId, amount);
+      await loadAccounts(context); // Reload to get updated balances
+    } catch (e) {
+      _errorMessage.value = e.toString();
+      if (context != null) {
+        UIHelpers.showSnackbar(
+          context,
+          message: 'Failed to update account balance: ${e.toString()}',
+          type: SnackbarType.error,
+        );
+      }
+    }
+  }
 }
