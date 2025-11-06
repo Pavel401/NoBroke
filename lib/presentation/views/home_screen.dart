@@ -6,11 +6,11 @@ import '../widgets/balance_card.dart';
 import '../widgets/transaction_card.dart';
 import '../widgets/custom_widgets.dart';
 import '../widgets/date_range_picker_dialog.dart' as custom;
+import '../widgets/swipe_instructions_dialog.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../core/theme/app_theme.dart';
 import 'add_transaction_screen.dart';
 import 'transaction_detail_screen.dart';
-import 'sms_parser_test_screen.dart';
 import 'settings_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -24,11 +24,6 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Money Tracker'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.science),
-            tooltip: 'Test SMS Parser',
-            onPressed: () => Get.to(() => const SmsParserTestScreen()),
-          ),
           IconButton(
             icon: const Icon(Icons.filter_list),
             onPressed: () => _showFilterDialog(context, controller),
@@ -109,9 +104,23 @@ class HomeScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Recent Transactions',
-                        style: Theme.of(context).textTheme.headlineSmall,
+                      Row(
+                        children: [
+                          Text(
+                            'Recent Transactions',
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          SizedBox(width: 2.w),
+                          IconButton(
+                            onPressed: () => _showSwipeInstructions(context),
+                            icon: Icon(
+                              Icons.help_outline_rounded,
+                              size: 5.w,
+                              color: AppTheme.primaryBlue,
+                            ),
+                            tooltip: 'Swipe instructions',
+                          ),
+                        ],
                       ),
                       TextButton(
                         onPressed: () {
@@ -288,6 +297,13 @@ class HomeScreen extends StatelessWidget {
           TextButton(onPressed: () => Get.back(), child: const Text('Close')),
         ],
       ),
+    );
+  }
+
+  void _showSwipeInstructions(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const SwipeInstructionsDialog(),
     );
   }
 
