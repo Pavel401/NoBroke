@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:moneyapp/presentation/views/home_screen.dart';
+import 'package:moneyapp/presentation/views/main_navigation.dart';
 import 'package:sizer/sizer.dart';
 import 'core/theme/app_theme.dart';
 import 'core/dependencies/dependency_injection.dart';
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           title: 'Money Tracker',
           theme: AppTheme.lightTheme,
-          home: HomeScreen(),
+          home: const MainNavigation(),
           debugShowCheckedModeBanner: false,
         );
       },
