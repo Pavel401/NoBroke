@@ -102,6 +102,10 @@ class DependencyInjection {
       () => SetDefaultAccountUseCase(Get.find<AccountRepository>()),
       fenix: true,
     );
+    Get.lazyPut<UpdateAccountBalanceUseCase>(
+      () => UpdateAccountBalanceUseCase(Get.find<AccountRepository>()),
+      fenix: true,
+    );
 
     // Controllers
     Get.lazyPut<TransactionController>(
@@ -115,6 +119,7 @@ class DependencyInjection {
         Get.find<DeleteTransactionUseCase>(),
         Get.find<GetCategoryWiseExpensesUseCase>(),
         Get.find<GetTotalAmountByTypeUseCase>(),
+        Get.find<UpdateAccountBalanceUseCase>(),
         Get.find<SmsService>(),
         Get.find<GeminiService>(),
       ),
@@ -130,6 +135,7 @@ class DependencyInjection {
         Get.find<DeleteAccountUseCase>(),
         Get.find<SetDefaultAccountUseCase>(),
         Get.find<GetDefaultAccountUseCase>(),
+        Get.find<UpdateAccountBalanceUseCase>(),
       ),
       fenix: true,
     );
