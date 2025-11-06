@@ -5,11 +5,8 @@ import '../../data/repositories/bank_account_repository_impl.dart';
 import '../../data/datasources/sms_service.dart';
 import '../../data/datasources/gemini_service.dart';
 import '../../domain/repositories/transaction_repository.dart';
-import '../../domain/repositories/bank_account_repository.dart';
 import '../../domain/usecases/transaction_usecases.dart';
-import '../../domain/usecases/bank_account_usecases.dart';
 import '../../presentation/controllers/transaction_controller.dart';
-import '../../presentation/controllers/bank_account_controller.dart';
 import '../constants/app_constants.dart';
 
 class DependencyInjection {
@@ -27,10 +24,6 @@ class DependencyInjection {
     // Repositories
     Get.lazyPut<TransactionRepository>(
       () => TransactionRepositoryImpl(Get.find<AppDatabase>()),
-      fenix: true,
-    );
-    Get.lazyPut<BankAccountRepository>(
-      () => BankAccountRepositoryImpl(Get.find<AppDatabase>()),
       fenix: true,
     );
 
@@ -73,36 +66,6 @@ class DependencyInjection {
       fenix: true,
     );
 
-    // Bank Account Use Cases
-    Get.lazyPut<AddBankAccountUseCase>(
-      () => AddBankAccountUseCase(Get.find<BankAccountRepository>()),
-      fenix: true,
-    );
-    Get.lazyPut<GetAllBankAccountsUseCase>(
-      () => GetAllBankAccountsUseCase(Get.find<BankAccountRepository>()),
-      fenix: true,
-    );
-    Get.lazyPut<GetBankAccountByIdUseCase>(
-      () => GetBankAccountByIdUseCase(Get.find<BankAccountRepository>()),
-      fenix: true,
-    );
-    Get.lazyPut<GetDefaultBankAccountUseCase>(
-      () => GetDefaultBankAccountUseCase(Get.find<BankAccountRepository>()),
-      fenix: true,
-    );
-    Get.lazyPut<UpdateBankAccountUseCase>(
-      () => UpdateBankAccountUseCase(Get.find<BankAccountRepository>()),
-      fenix: true,
-    );
-    Get.lazyPut<DeleteBankAccountUseCase>(
-      () => DeleteBankAccountUseCase(Get.find<BankAccountRepository>()),
-      fenix: true,
-    );
-    Get.lazyPut<SetDefaultBankAccountUseCase>(
-      () => SetDefaultBankAccountUseCase(Get.find<BankAccountRepository>()),
-      fenix: true,
-    );
-
     // Controllers
     Get.lazyPut<TransactionController>(
       () => TransactionController(
@@ -117,20 +80,6 @@ class DependencyInjection {
         Get.find<GetTotalAmountByTypeUseCase>(),
         Get.find<SmsService>(),
         Get.find<GeminiService>(),
-      ),
-      fenix: true,
-    );
-
-    // Bank Account Controller
-    Get.lazyPut<BankAccountController>(
-      () => BankAccountController(
-        Get.find<AddBankAccountUseCase>(),
-        Get.find<GetAllBankAccountsUseCase>(),
-        Get.find<GetBankAccountByIdUseCase>(),
-        Get.find<GetDefaultBankAccountUseCase>(),
-        Get.find<UpdateBankAccountUseCase>(),
-        Get.find<DeleteBankAccountUseCase>(),
-        Get.find<SetDefaultBankAccountUseCase>(),
       ),
       fenix: true,
     );
