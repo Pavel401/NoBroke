@@ -12,6 +12,7 @@ enum TransactionCategory {
   education,
   utilities,
   fuel,
+  transfer,
   other,
 }
 
