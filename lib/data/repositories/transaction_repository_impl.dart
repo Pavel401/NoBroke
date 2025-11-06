@@ -110,6 +110,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
           ? List<String>.from(jsonDecode(transaction.photos!))
           : [],
       smsContent: transaction.smsContent,
+      accountId: transaction.accountId,
     );
   }
 
@@ -127,6 +128,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
         entity.photos.isNotEmpty ? jsonEncode(entity.photos) : '[]',
       ),
       smsContent: drift.Value(entity.smsContent),
+      accountId: drift.Value(entity.accountId),
       // SMS Parser fields - set to null for now if not provided
       accountType: const drift.Value(null),
       accountNumber: const drift.Value(null),
@@ -170,6 +172,7 @@ class TransactionRepositoryImpl implements TransactionRepository {
         transaction.photos.isNotEmpty ? jsonEncode(transaction.photos) : '[]',
       ),
       smsContent: drift.Value(transaction.smsContent),
+      accountId: drift.Value(transaction.accountId),
       // SMS Parser fields
       accountType: drift.Value(accountType),
       accountNumber: drift.Value(accountNumber),
@@ -186,6 +189,11 @@ class TransactionRepositoryImpl implements TransactionRepository {
 
     await _database.insertTransaction(companion);
     return transaction.id;
+  }
+
+  /// Reset the entire database (delete and recreate)
+  Future<void> resetDatabase() async {
+    await _database.resetDatabase();
   }
 
   /// Reset all data in the database
