@@ -53,6 +53,11 @@ class TransactionController extends GetxController {
       <TransactionCategory, double>{}.obs;
   final RxBool _isProcessingSms = false.obs;
 
+  // Filter state tracking
+  final Rxn<TransactionType> _selectedType = Rxn<TransactionType>();
+  final Rxn<TransactionCategory> _selectedCategory = Rxn<TransactionCategory>();
+  final RxString _searchQuery = ''.obs;
+
   // Getters
   List<TransactionEntity> get transactions => _transactions;
   List<TransactionEntity> get filteredTransactions => _filteredTransactions;
@@ -65,6 +70,11 @@ class TransactionController extends GetxController {
   Map<TransactionCategory, double> get categoryExpenses => _categoryExpenses;
   bool get isProcessingSms => _isProcessingSms.value;
   SmsService get smsService => _smsService;
+
+  // Filter state getters
+  TransactionType? get selectedType => _selectedType.value;
+  TransactionCategory? get selectedCategory => _selectedCategory.value;
+  String get searchQuery => _searchQuery.value;
 
   @override
   void onInit() {
@@ -299,23 +309,13 @@ class TransactionController extends GetxController {
   }
 
   void filterTransactionsByType(TransactionType? type) {
-    if (type == null) {
-      _filteredTransactions.value = _transactions;
-    } else {
-      _filteredTransactions.value = _transactions
-          .where((transaction) => transaction.type == type)
-          .toList();
-    }
+    _selectedType.value = type;
+    _applyFilters();
   }
 
   void filterTransactionsByCategory(TransactionCategory? category) {
-    if (category == null) {
-      _filteredTransactions.value = _transactions;
-    } else {
-      _filteredTransactions.value = _transactions
-          .where((transaction) => transaction.category == category)
-          .toList();
-    }
+    _selectedCategory.value = category;
+    _applyFilters();
   }
 
   void filterTransactionsByDateRange(DateTime? start, DateTime? end) {
@@ -335,19 +335,52 @@ class TransactionController extends GetxController {
   }
 
   void searchTransactions(String query) {
-    if (query.isEmpty) {
-      _filteredTransactions.value = _transactions;
-    } else {
-      _filteredTransactions.value = _transactions
+    _searchQuery.value = query;
+    _applyFilters();
+  }
+
+  void clearAllFilters() {
+    _selectedType.value = null;
+    _selectedCategory.value = null;
+    _searchQuery.value = '';
+    _filteredTransactions.value = _transactions;
+  }
+
+  void _applyFilters() {
+    var filtered = _transactions.toList();
+
+    // Apply type filter
+    if (_selectedType.value != null) {
+      filtered = filtered
+          .where((transaction) => transaction.type == _selectedType.value)
+          .toList();
+    }
+
+    // Apply category filter
+    if (_selectedCategory.value != null) {
+      filtered = filtered
+          .where(
+            (transaction) => transaction.category == _selectedCategory.value,
+          )
+          .toList();
+    }
+
+    // Apply search filter
+    if (_searchQuery.value.isNotEmpty) {
+      filtered = filtered
           .where(
             (transaction) =>
-                transaction.title.toLowerCase().contains(query.toLowerCase()) ||
+                transaction.title.toLowerCase().contains(
+                  _searchQuery.value.toLowerCase(),
+                ) ||
                 transaction.description.toLowerCase().contains(
-                  query.toLowerCase(),
+                  _searchQuery.value.toLowerCase(),
                 ),
           )
           .toList();
     }
+
+    _filteredTransactions.value = filtered;
   }
 
   Future<void> processSmsMessages({

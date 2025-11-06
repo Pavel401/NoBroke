@@ -7,6 +7,7 @@ import '../widgets/transaction_card.dart';
 import '../widgets/custom_widgets.dart';
 import '../widgets/date_range_picker_dialog.dart' as custom;
 import '../widgets/swipe_instructions_dialog.dart';
+import '../widgets/search_bottom_sheet.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../core/theme/app_theme.dart';
 import 'add_transaction_screen.dart';
@@ -203,45 +204,54 @@ class HomeScreen extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               SizedBox(height: 2.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: CategoryChip(
-                      label: 'All',
-                      onTap: () => controller.filterTransactionsByType(null),
-                    ),
-                  ),
-                  SizedBox(width: 1.5.w),
-                  Expanded(
-                    child: CategoryChip(
-                      label: 'Credit',
-                      selectedColor: AppTheme.successGreen,
-                      onTap: () => controller.filterTransactionsByType(
-                        TransactionType.credit,
+              Obx(
+                () => Row(
+                  children: [
+                    Expanded(
+                      child: CategoryChip(
+                        label: 'All',
+                        isSelected: controller.selectedType == null,
+                        onTap: () => controller.filterTransactionsByType(null),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 1.5.w),
-                  Expanded(
-                    child: CategoryChip(
-                      label: 'Debit',
-                      selectedColor: AppTheme.errorRed,
-                      onTap: () => controller.filterTransactionsByType(
-                        TransactionType.debit,
+                    SizedBox(width: 1.5.w),
+                    Expanded(
+                      child: CategoryChip(
+                        label: 'Credit',
+                        isSelected:
+                            controller.selectedType == TransactionType.credit,
+                        selectedColor: AppTheme.successGreen,
+                        onTap: () => controller.filterTransactionsByType(
+                          TransactionType.credit,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 1.5.w),
-                  Expanded(
-                    child: CategoryChip(
-                      label: 'Transfer',
-                      selectedColor: AppTheme.primaryBlue,
-                      onTap: () => controller.filterTransactionsByType(
-                        TransactionType.transfer,
+                    SizedBox(width: 1.5.w),
+                    Expanded(
+                      child: CategoryChip(
+                        label: 'Debit',
+                        isSelected:
+                            controller.selectedType == TransactionType.debit,
+                        selectedColor: AppTheme.errorRed,
+                        onTap: () => controller.filterTransactionsByType(
+                          TransactionType.debit,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(width: 1.5.w),
+                    Expanded(
+                      child: CategoryChip(
+                        label: 'Transfer',
+                        isSelected:
+                            controller.selectedType == TransactionType.transfer,
+                        selectedColor: AppTheme.primaryBlue,
+                        onTap: () => controller.filterTransactionsByType(
+                          TransactionType.transfer,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
 
               SizedBox(height: 3.h),
@@ -250,30 +260,61 @@ class HomeScreen extends StatelessWidget {
               Text('Category', style: Theme.of(context).textTheme.titleMedium),
               SizedBox(height: 2.h),
               Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 2.w,
-                  mainAxisSpacing: 1.h,
-                  childAspectRatio: 2.5,
-                  children: [
-                    CategoryChip(
-                      label: 'All',
-                      onTap: () =>
-                          controller.filterTransactionsByCategory(null),
-                    ),
-                    ...TransactionCategory.values.map(
-                      (category) => CategoryChip(
-                        label: _getCategoryDisplayName(category),
+                child: Obx(
+                  () => GridView.count(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 2.w,
+                    mainAxisSpacing: 1.h,
+                    childAspectRatio: 2.5,
+                    children: [
+                      CategoryChip(
+                        label: 'All',
+                        isSelected: controller.selectedCategory == null,
                         onTap: () =>
-                            controller.filterTransactionsByCategory(category),
+                            controller.filterTransactionsByCategory(null),
                       ),
-                    ),
-                  ],
+                      ...TransactionCategory.values.map(
+                        (category) => CategoryChip(
+                          label: _getCategoryDisplayName(category),
+                          isSelected: controller.selectedCategory == category,
+                          onTap: () =>
+                              controller.filterTransactionsByCategory(category),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 
               SizedBox(height: 2.h),
-              CustomButton(text: 'Apply Filters', onPressed: () => Get.back()),
+
+              // Action buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        controller.clearAllFilters();
+                      },
+                      icon: const Icon(Icons.clear_all, size: 18),
+                      label: const Text('Clear'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[100],
+                        foregroundColor: Colors.grey[700],
+                        elevation: 0,
+                        side: BorderSide(color: Colors.grey[300]!),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 3.w),
+                  Expanded(
+                    child: CustomButton(
+                      text: 'Apply Filters',
+                      onPressed: () => Get.back(),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -285,18 +326,11 @@ class HomeScreen extends StatelessWidget {
     BuildContext context,
     TransactionController controller,
   ) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Search Transactions'),
-        content: CustomTextField(
-          hint: 'Enter title or description',
-          onChanged: (value) => controller.searchTransactions(value),
-        ),
-        actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Close')),
-        ],
-      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const SearchBottomSheet(),
     );
   }
 
