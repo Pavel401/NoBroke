@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/transaction_entity.dart';
@@ -7,6 +8,7 @@ import '../../data/repositories/transaction_repository_impl.dart';
 import '../../data/datasources/sms_service.dart';
 import '../../data/datasources/gemini_service.dart';
 import '../../data/models/enums.dart' as app_enums;
+import '../../core/utils/ui_helpers.dart';
 
 class TransactionController extends GetxController {
   final AddTransactionUseCase _addTransactionUseCase;
@@ -101,7 +103,10 @@ class TransactionController extends GetxController {
     }
   }
 
-  Future<void> addTransaction(TransactionEntity transaction) async {
+  Future<void> addTransaction(
+    TransactionEntity transaction, [
+    BuildContext? context,
+  ]) async {
     try {
       _isLoading.value = true;
       _errorMessage.value = '';
@@ -110,16 +115,31 @@ class TransactionController extends GetxController {
       await loadTransactions();
       await loadStatistics();
 
-      Get.snackbar('Success', 'Transaction added successfully');
+      if (context != null) {
+        UIHelpers.showSnackbar(
+          context,
+          message: 'Transaction added successfully',
+          type: SnackbarType.success,
+        );
+      }
     } catch (e) {
       _errorMessage.value = 'Failed to add transaction: $e';
-      Get.snackbar('Error', 'Failed to add transaction');
+      if (context != null) {
+        UIHelpers.showSnackbar(
+          context,
+          message: 'Failed to add transaction',
+          type: SnackbarType.error,
+        );
+      }
     } finally {
       _isLoading.value = false;
     }
   }
 
-  Future<void> updateTransaction(TransactionEntity transaction) async {
+  Future<void> updateTransaction(
+    TransactionEntity transaction, [
+    BuildContext? context,
+  ]) async {
     try {
       _isLoading.value = true;
       _errorMessage.value = '';
@@ -128,19 +148,31 @@ class TransactionController extends GetxController {
       if (success) {
         await loadTransactions();
         await loadStatistics();
-        Get.snackbar('Success', 'Transaction updated successfully');
+        if (context != null) {
+          UIHelpers.showSnackbar(
+            context,
+            message: 'Transaction updated successfully',
+            type: SnackbarType.success,
+          );
+        }
       } else {
         throw Exception('Update failed');
       }
     } catch (e) {
       _errorMessage.value = 'Failed to update transaction: $e';
-      Get.snackbar('Error', 'Failed to update transaction');
+      if (context != null) {
+        UIHelpers.showSnackbar(
+          context,
+          message: 'Failed to update transaction',
+          type: SnackbarType.error,
+        );
+      }
     } finally {
       _isLoading.value = false;
     }
   }
 
-  Future<void> deleteTransaction(String id) async {
+  Future<void> deleteTransaction(String id, [BuildContext? context]) async {
     try {
       _isLoading.value = true;
       _errorMessage.value = '';
@@ -149,13 +181,25 @@ class TransactionController extends GetxController {
       if (success) {
         await loadTransactions();
         await loadStatistics();
-        Get.snackbar('Success', 'Transaction deleted successfully');
+        if (context != null) {
+          UIHelpers.showSnackbar(
+            context,
+            message: 'Transaction deleted successfully',
+            type: SnackbarType.success,
+          );
+        }
       } else {
         throw Exception('Delete failed');
       }
     } catch (e) {
       _errorMessage.value = 'Failed to delete transaction: $e';
-      Get.snackbar('Error', 'Failed to delete transaction');
+      if (context != null) {
+        UIHelpers.showSnackbar(
+          context,
+          message: 'Failed to delete transaction',
+          type: SnackbarType.error,
+        );
+      }
     } finally {
       _isLoading.value = false;
     }
@@ -216,6 +260,7 @@ class TransactionController extends GetxController {
   Future<void> processSmsMessages({
     DateTime? startDate,
     DateTime? endDate,
+    BuildContext? context,
   }) async {
     try {
       _isProcessingSms.value = true;
@@ -229,7 +274,13 @@ class TransactionController extends GetxController {
       );
 
       if (smsMessages.isEmpty) {
-        Get.snackbar('Info', 'No banking SMS messages found');
+        if (context != null) {
+          UIHelpers.showSnackbar(
+            context,
+            message: 'No banking SMS messages found',
+            type: SnackbarType.info,
+          );
+        }
         return;
       }
 
@@ -348,13 +399,22 @@ class TransactionController extends GetxController {
           ? 'from ${startDate.day}/${startDate.month}/${startDate.year} to ${endDate.day}/${endDate.month}/${endDate.year}'
           : 'from last 30 days';
 
-      Get.snackbar(
-        'Success',
-        'Processed $processedCount transactions from SMS $dateRange',
-      );
+      if (context != null) {
+        UIHelpers.showSnackbar(
+          context,
+          message: 'Processed $processedCount transactions from SMS $dateRange',
+          type: SnackbarType.success,
+        );
+      }
     } catch (e) {
       _errorMessage.value = 'Failed to process SMS messages: $e';
-      Get.snackbar('Error', 'Failed to process SMS messages');
+      if (context != null) {
+        UIHelpers.showSnackbar(
+          context,
+          message: 'Failed to process SMS messages',
+          type: SnackbarType.error,
+        );
+      }
     } finally {
       _isProcessingSms.value = false;
     }
