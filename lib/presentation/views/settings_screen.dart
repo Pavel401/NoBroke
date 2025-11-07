@@ -20,9 +20,17 @@ class SettingsScreen extends StatelessWidget {
       backgroundColor: AppTheme.greyLight,
       appBar: AppBar(
         title: const Text('Settings'),
-        backgroundColor: AppTheme.primaryBlack,
-        foregroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.white),
+        // backgroundColor: AppTheme.primaryBlack,
+        // foregroundColor: Colors.white,
+        // iconTheme: const IconThemeData(),
+        leading: IconButton(
+          icon: Icon(
+            Icons.chevron_left_outlined,
+            size: 7.w,
+            color: AppTheme.primaryBlack,
+          ),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         elevation: 0,
       ),
       body: SingleChildScrollView(
