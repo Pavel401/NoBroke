@@ -61,6 +61,7 @@ class TransactionController extends GetxController {
   final Rxn<TransactionType> _selectedType = Rxn<TransactionType>();
   final Rxn<TransactionCategory> _selectedCategory = Rxn<TransactionCategory>();
   final RxString _searchQuery = ''.obs;
+  final Rxn<DateTime> _selectedMonth = Rxn<DateTime>();
 
   // Getters
   List<TransactionEntity> get transactions => _transactions;
@@ -79,6 +80,7 @@ class TransactionController extends GetxController {
   TransactionType? get selectedType => _selectedType.value;
   TransactionCategory? get selectedCategory => _selectedCategory.value;
   String get searchQuery => _searchQuery.value;
+  DateTime? get selectedMonth => _selectedMonth.value;
 
   @override
   void onInit() {
@@ -322,6 +324,11 @@ class TransactionController extends GetxController {
     _applyFilters();
   }
 
+  void filterTransactionsByMonth(DateTime? month) {
+    _selectedMonth.value = month;
+    _applyFilters();
+  }
+
   void filterTransactionsByDateRange(DateTime? start, DateTime? end) {
     if (start == null || end == null) {
       _filteredTransactions.value = _transactions;
@@ -347,6 +354,7 @@ class TransactionController extends GetxController {
     _selectedType.value = null;
     _selectedCategory.value = null;
     _searchQuery.value = '';
+    _selectedMonth.value = null;
     _filteredTransactions.value = _transactions;
   }
 
@@ -365,6 +373,18 @@ class TransactionController extends GetxController {
       filtered = filtered
           .where(
             (transaction) => transaction.category == _selectedCategory.value,
+          )
+          .toList();
+    }
+
+    // Apply month filter
+    if (_selectedMonth.value != null) {
+      final selectedMonth = _selectedMonth.value!;
+      filtered = filtered
+          .where(
+            (transaction) =>
+                transaction.date.year == selectedMonth.year &&
+                transaction.date.month == selectedMonth.month,
           )
           .toList();
     }
