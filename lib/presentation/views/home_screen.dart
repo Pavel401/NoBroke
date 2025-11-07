@@ -259,6 +259,28 @@ class HomeScreen extends StatelessWidget {
 
               SizedBox(height: 3.h),
 
+              // Filter by Month
+              Text('Month', style: Theme.of(context).textTheme.titleMedium),
+              SizedBox(height: 2.h),
+              Obx(
+                () => SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      CategoryChip(
+                        label: 'All',
+                        isSelected: controller.selectedMonth == null,
+                        onTap: () => controller.filterTransactionsByMonth(null),
+                      ),
+                      SizedBox(width: 1.5.w),
+                      ..._generateMonthChips(controller),
+                    ],
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 3.h),
+
               // Filter by Category
               Text('Category', style: Theme.of(context).textTheme.titleMedium),
               SizedBox(height: 2.h),
@@ -381,6 +403,55 @@ class HomeScreen extends StatelessWidget {
       case TransactionCategory.other:
         return 'Other';
     }
+  }
+
+  List<Widget> _generateMonthChips(TransactionController controller) {
+    final now = DateTime.now();
+    final List<Widget> monthChips = [];
+
+    // Generate chips for the last 12 months
+    for (int i = 0; i < 12; i++) {
+      final month = DateTime(now.year, now.month - i, 1);
+      final monthName = _getMonthName(month.month);
+      final displayText = month.year == now.year
+          ? monthName
+          : '$monthName ${month.year}';
+
+      monthChips.add(
+        CategoryChip(
+          label: displayText,
+          isSelected:
+              controller.selectedMonth != null &&
+              controller.selectedMonth!.year == month.year &&
+              controller.selectedMonth!.month == month.month,
+          onTap: () => controller.filterTransactionsByMonth(month),
+        ),
+      );
+
+      if (i < 11) {
+        monthChips.add(SizedBox(width: 1.5.w));
+      }
+    }
+
+    return monthChips;
+  }
+
+  String _getMonthName(int month) {
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return monthNames[month - 1];
   }
 }
 
