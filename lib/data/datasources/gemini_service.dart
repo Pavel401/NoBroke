@@ -1,5 +1,7 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
-import '../../domain/entities/transaction_entity.dart';
+import 'package:moneyapp/data/models/enums.dart';
+import 'package:moneyapp/domain/entities/transaction_entity.dart'
+    hide TransactionType;
 
 class ParsedTransaction {
   final bool isTransaction;

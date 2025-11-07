@@ -1,7 +1,7 @@
-import '../../domain/entities/bank_account_entity.dart';
-import '../../domain/repositories/account_repository.dart';
-import '../models/database.dart';
 import 'package:drift/drift.dart';
+import 'package:moneyapp/data/models/database.dart';
+import 'package:moneyapp/domain/entities/bank_account_entity.dart';
+import 'package:moneyapp/domain/repositories/account_repository.dart';
 
 class AccountRepositoryImpl implements AccountRepository {
   final AppDatabase _database;
