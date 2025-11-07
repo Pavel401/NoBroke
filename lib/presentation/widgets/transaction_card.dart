@@ -35,8 +35,9 @@ class TransactionCard extends StatelessWidget {
           direction: DismissDirection.horizontal,
           confirmDismiss: (direction) async {
             if (direction == DismissDirection.endToStart && onDelete != null) {
-              // Show delete confirmation
-              return await _showDeleteConfirmation(context);
+              // Show delete confirmation and handle deletion
+              await _showDeleteConfirmation(context);
+              return false; // Don't dismiss through swipe, we handle it in dialog
             } else if (direction == DismissDirection.startToEnd &&
                 onEdit != null) {
               // Trigger edit action
@@ -276,34 +277,33 @@ class TransactionCard extends StatelessWidget {
     );
   }
 
-  Future<bool> _showDeleteConfirmation(BuildContext context) async {
-    return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Delete Transaction'),
-            content: Text(
-              'Are you sure you want to delete "${transaction.title}"?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                  if (onDelete != null) onDelete!();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.errorRed,
-                  foregroundColor: AppTheme.primaryWhite,
-                ),
-                child: const Text('Delete'),
-              ),
-            ],
+  Future<void> _showDeleteConfirmation(BuildContext context) async {
+    await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Transaction'),
+        content: Text(
+          'Are you sure you want to delete "${transaction.title}"?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
           ),
-        ) ??
-        false;
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              onDelete!();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.errorRed,
+              foregroundColor: AppTheme.primaryWhite,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
   }
 
   String _formatAmount(double amount) {
