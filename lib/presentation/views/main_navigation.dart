@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sizer/sizer.dart';
 import '../../core/theme/app_theme.dart';
 import 'home_screen.dart';
 import 'accounts_screen.dart';

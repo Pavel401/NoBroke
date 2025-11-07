@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
-import '../../core/theme/app_theme.dart';
-import 'custom_widgets.dart';
+import 'package:moneyapp/core/theme/app_theme.dart';
+import 'package:moneyapp/presentation/widgets/custom_widgets.dart';
 
 class DateRangePickerDialog extends StatefulWidget {
   final DateTime? initialStartDate;

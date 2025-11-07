@@ -1,18 +1,18 @@
 import 'package:get/get.dart';
-import '../../data/models/database.dart';
-import '../../data/repositories/transaction_repository_impl.dart';
-import '../../data/repositories/account_repository_impl.dart';
-import '../../data/datasources/sms_service.dart';
-import '../../data/datasources/gemini_service.dart';
-import '../../data/datasources/budget_service.dart';
-import '../../domain/repositories/transaction_repository.dart';
-import '../../domain/repositories/account_repository.dart';
-import '../../domain/usecases/transaction_usecases.dart';
-import '../../domain/usecases/account_usecases.dart';
-import '../../presentation/controllers/transaction_controller.dart';
-import '../../presentation/controllers/account_controller.dart';
-import '../../presentation/controllers/budget_controller.dart';
-import '../constants/app_constants.dart';
+import 'package:moneyapp/core/constants/app_constants.dart';
+import 'package:moneyapp/data/datasources/budget_service.dart';
+import 'package:moneyapp/data/datasources/gemini_service.dart';
+import 'package:moneyapp/data/datasources/sms_service.dart';
+import 'package:moneyapp/data/models/database.dart';
+import 'package:moneyapp/data/repositories/account_repository_impl.dart';
+import 'package:moneyapp/data/repositories/transaction_repository_impl.dart';
+import 'package:moneyapp/domain/repositories/account_repository.dart';
+import 'package:moneyapp/domain/repositories/transaction_repository.dart';
+import 'package:moneyapp/domain/usecases/account_usecases.dart';
+import 'package:moneyapp/domain/usecases/transaction_usecases.dart';
+import 'package:moneyapp/presentation/controllers/account_controller.dart';
+import 'package:moneyapp/presentation/controllers/budget_controller.dart';
+import 'package:moneyapp/presentation/controllers/transaction_controller.dart';
 
 class DependencyInjection {
   static void init() {
