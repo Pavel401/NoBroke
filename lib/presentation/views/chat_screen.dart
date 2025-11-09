@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme/app_theme.dart';
@@ -6,6 +7,7 @@ import '../../core/services/chat_service.dart';
 import '../controllers/chat_controller.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:network_inspector/network_inspector.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -18,6 +20,16 @@ class ChatScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Finance Chat'),
         actions: [
+          if (kDebugMode)
+            IconButton(
+              icon: const Icon(Icons.wifi_tethering),
+              tooltip: 'Network Inspector',
+              onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => ActivityPage()),
+                );
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => _showSettingsDialog(context, controller),
@@ -66,6 +78,51 @@ class ChatScreen extends StatelessWidget {
               );
             }
             return const SizedBox.shrink();
+          }),
+
+          // Data sharing info banner
+          Obx(() {
+            return Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryBlack.withOpacity(0.05),
+                border: Border(
+                  bottom: BorderSide(color: AppTheme.greyMedium, width: 0.5),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: AppTheme.primaryBlack.withOpacity(0.6),
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Sharing: ${controller.transactionDays.value}d transactions, ${controller.budgetMonths.value}mo budgets',
+                      style: TextStyle(
+                        color: AppTheme.primaryBlack.withOpacity(0.7),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () => _showSettingsDialog(context, controller),
+                    child: Text(
+                      'Configure',
+                      style: TextStyle(
+                        color: AppTheme.primaryBlack,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
           }),
 
           // Chat messages
@@ -331,6 +388,172 @@ class ChatScreen extends StatelessWidget {
               const Divider(),
               const SizedBox(height: 16),
 
+              // Data Sharing Preferences Section
+              const Text(
+                'Data Sharing Preferences',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Configure how much data to share with the AI:',
+                style: TextStyle(fontSize: 12, color: AppTheme.greyDark),
+              ),
+              const SizedBox(height: 16),
+
+              // Transaction Days
+              const Text(
+                'Transaction History',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              // Quick presets for transactions
+              Obx(
+                () => Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildPresetChip(
+                      controller,
+                      '7 days',
+                      () => controller.transactionDays.value = 7,
+                      controller.transactionDays.value == 7,
+                    ),
+                    _buildPresetChip(
+                      controller,
+                      '30 days',
+                      () => controller.transactionDays.value = 30,
+                      controller.transactionDays.value == 30,
+                    ),
+                    _buildPresetChip(
+                      controller,
+                      '90 days',
+                      () => controller.transactionDays.value = 90,
+                      controller.transactionDays.value == 90,
+                    ),
+                    _buildPresetChip(
+                      controller,
+                      '180 days',
+                      () => controller.transactionDays.value = 180,
+                      controller.transactionDays.value == 180,
+                    ),
+                    _buildPresetChip(
+                      controller,
+                      '1 year',
+                      () => controller.transactionDays.value = 365,
+                      controller.transactionDays.value == 365,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Quick presets for budgets
+              Obx(
+                () => Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildPresetChip(
+                      controller,
+                      '3 months',
+                      () => controller.budgetMonths.value = 3,
+                      controller.budgetMonths.value == 3,
+                    ),
+                    _buildPresetChip(
+                      controller,
+                      '6 months',
+                      () => controller.budgetMonths.value = 6,
+                      controller.budgetMonths.value == 6,
+                    ),
+                    _buildPresetChip(
+                      controller,
+                      '1 year',
+                      () => controller.budgetMonths.value = 12,
+                      controller.budgetMonths.value == 12,
+                    ),
+                    _buildPresetChip(
+                      controller,
+                      '2 years',
+                      () => controller.budgetMonths.value = 24,
+                      controller.budgetMonths.value == 24,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Obx(
+                () => Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Slider(
+                            value: controller.transactionDays.value.toDouble(),
+                            min: 7,
+                            max: 365,
+                            divisions: 51, // 7, 14, 30, 60, 90, 180, 365
+                            label: '${controller.transactionDays.value} days',
+                            activeColor: AppTheme.primaryBlack,
+                            onChanged: (value) {
+                              controller.transactionDays.value = value.toInt();
+                            },
+                          ),
+                          Text(
+                            'Last ${controller.transactionDays.value} days',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppTheme.greyDark,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Budget Months
+              const Text(
+                'Budget History',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              Obx(
+                () => Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Slider(
+                            value: controller.budgetMonths.value.toDouble(),
+                            min: 1,
+                            max: 36,
+                            divisions: 35,
+                            label: '${controller.budgetMonths.value} months',
+                            activeColor: AppTheme.primaryBlack,
+                            onChanged: (value) {
+                              controller.budgetMonths.value = value.toInt();
+                            },
+                          ),
+                          Text(
+                            'Last ${controller.budgetMonths.value} ${controller.budgetMonths.value == 1 ? "month" : "months"}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppTheme.greyDark,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Divider(),
+              const SizedBox(height: 16),
+
               // User History Section
               const Text(
                 'User History',
@@ -361,8 +584,25 @@ class ChatScreen extends StatelessWidget {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
+              // Persist history limit and data sharing preferences
               controller.updateHistoryLimit(controller.historyLimit.value);
+              controller.updateDataPreferences(
+                controller.transactionDays.value,
+                controller.budgetMonths.value,
+              );
+
+              // Also persist backend URL if provided (basic validation)
+              final rawUrl = baseUrlController.text.trim();
+              if (rawUrl.isNotEmpty) {
+                final hasProtocol =
+                    rawUrl.startsWith('http://') ||
+                    rawUrl.startsWith('https://');
+                if (hasProtocol) {
+                  await ChatService.setBaseUrl(rawUrl);
+                }
+              }
+
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -374,6 +614,35 @@ class ChatScreen extends StatelessWidget {
             child: const Text('Save'),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPresetChip(
+    ChatController controller,
+    String label,
+    VoidCallback onTap,
+    bool isSelected,
+  ) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primaryBlack : AppTheme.greyLight,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? AppTheme.primaryBlack : AppTheme.greyMedium,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: isSelected ? AppTheme.primaryWhite : AppTheme.primaryBlack,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
       ),
     );
   }
