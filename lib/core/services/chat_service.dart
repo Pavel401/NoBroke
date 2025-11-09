@@ -4,9 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatService {
-  static const String _defaultBaseUrl = kDebugMode
-      ? 'https://your-finance-bro-agent-production.up.railway.app'
-      : "";
+  static const String _defaultBaseUrl =
+      'https://your-finance-bro-agent-production.up.railway.app';
   static const String _baseUrlKey = 'chat_base_url';
 
   /// Get the current base URL from SharedPreferences
@@ -87,19 +86,46 @@ class ChatService {
       final baseUrl = await getBaseUrl();
       final apiUrl = '$baseUrl/agent/chat';
 
-      final request = http.Request('POST', Uri.parse(apiUrl));
-      request.headers['content-type'] = 'application/json';
-      request.body = json.encode({
+      final requestBody = {
         'user_query': userQuery,
         'finance_info': financeInfo,
         'chat_history': chatHistory,
-      });
+      };
+
+      if (kDebugMode) {
+        print('🌐 API URL: $apiUrl');
+        print('📤 Request Body Keys: ${requestBody.keys.toList()}');
+        print('📊 Finance Info Keys: ${financeInfo.keys.toList()}');
+        print('💬 Chat History Length: ${chatHistory.length}');
+        print('📋 Full Request Body:');
+        print(const JsonEncoder.withIndent('  ').convert(requestBody));
+      }
+
+      final request = http.Request('POST', Uri.parse(apiUrl));
+      request.headers['content-type'] = 'application/json';
+      request.body = json.encode(requestBody);
 
       final client = http.Client();
       final response = await client.send(request);
 
+      if (kDebugMode) {
+        print('📥 Response Status Code: ${response.statusCode}');
+      }
+
       if (response.statusCode != 200) {
-        onError('Server error: ${response.statusCode}');
+        // Try to read error message from response
+        String errorBody = '';
+        try {
+          errorBody = await response.stream.bytesToString();
+          if (kDebugMode) {
+            print('❌ Error Response Body: $errorBody');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('❌ Could not read error body: $e');
+          }
+        }
+        onError('Server error ${response.statusCode}: $errorBody');
         return;
       }
 
