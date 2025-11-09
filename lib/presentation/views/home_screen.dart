@@ -8,6 +8,7 @@ import '../widgets/custom_widgets.dart';
 import '../widgets/swipe_instructions_dialog.dart';
 import '../widgets/search_bottom_sheet.dart';
 import '../widgets/sms_scan_bottom_sheet.dart';
+import '../widgets/sms_privacy_dialog.dart';
 import '../../domain/entities/transaction_entity.dart';
 import '../../core/theme/app_theme.dart';
 import 'add_transaction_screen.dart';
@@ -370,11 +371,19 @@ class HomeScreen extends StatelessWidget {
     BuildContext context,
     TransactionController controller,
   ) {
-    showModalBottomSheet(
+    // Show privacy dialog first, then SMS scan bottom sheet
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const SmsScanBottomSheet(),
+      builder: (context) => SmsPrivacyDialog(
+        onAccept: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const SmsScanBottomSheet(),
+          );
+        },
+      ),
     );
   }
 
