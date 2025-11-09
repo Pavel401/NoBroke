@@ -7,7 +7,6 @@ import '../../core/services/chat_service.dart';
 import '../controllers/chat_controller.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:network_inspector/network_inspector.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
@@ -20,16 +19,6 @@ class ChatScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Finance Chat'),
         actions: [
-          if (kDebugMode)
-            IconButton(
-              icon: const Icon(Icons.wifi_tethering),
-              tooltip: 'Network Inspector',
-              onPressed: () async {
-                await Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => ActivityPage()),
-                );
-              },
-            ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => _showSettingsDialog(context, controller),

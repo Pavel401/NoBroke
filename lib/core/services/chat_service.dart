@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:network_inspector/common/utils/http_interceptor.dart';
-import 'package:network_inspector/network_inspector.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatService {
@@ -53,12 +51,10 @@ class ChatService {
   static Future<bool> validateUrl(String url) async {
     try {
       final cleanUrl = url.trim().replaceAll(RegExp(r'/$'), '');
-
-      // Use inspector-enabled client so validation is also logged
-      final client = _createHttpClient(baseUrl: cleanUrl);
+      final client = http.Client();
 
       if (kDebugMode) {
-        print('🔍 Testing URL with Network Inspector: $cleanUrl');
+        print('🔍 Testing URL: $cleanUrl');
       }
 
       final response = await client
@@ -69,6 +65,7 @@ class ChatService {
         print('✅ Response: ${response.statusCode}');
       }
 
+      client.close();
       return response.statusCode < 500;
     } catch (e) {
       if (kDebugMode) {
@@ -98,8 +95,7 @@ class ChatService {
         'chat_history': chatHistory,
       });
 
-      // Send via inspector-enabled client to capture streaming traffic
-      final client = _createHttpClient(baseUrl: baseUrl);
+      final client = http.Client();
       final response = await client.send(request);
 
       if (response.statusCode != 200) {
@@ -144,28 +140,8 @@ class ChatService {
       hasData ? onComplete() : onError('No response received');
     } catch (e) {
       onError('Error: $e');
+    } finally {
+      // Clean up client
     }
-  }
-
-  // Create an Http client wrapped with NetworkInspector for logging
-  static HttpInterceptor _createHttpClient({required String baseUrl}) {
-    final networkInspector = NetworkInspector();
-    final client = http.Client();
-    return HttpInterceptor(
-      client: client,
-      baseUrl: Uri.parse(baseUrl),
-      networkInspector: networkInspector,
-      logIsAllowed: true,
-      onHttpFinish: (hashCode, title, message) {
-        if (kDebugMode) {
-          print('Network Inspector - $title: $message');
-        }
-      },
-      headers: {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer WEKLSSS',
-      },
-    );
   }
 }

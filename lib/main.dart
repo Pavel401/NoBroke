@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:moneyapp/presentation/views/main_navigation.dart';
-import 'package:network_inspector/network_inspector.dart';
 import 'package:sizer/sizer.dart';
 import 'core/theme/app_theme.dart';
 import 'core/dependencies/dependency_injection.dart';
@@ -9,7 +8,6 @@ import 'core/dependencies/dependency_injection.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   DependencyInjection.init();
-  NetworkInspector.initialize();
 
   runApp(const MyApp());
 }
