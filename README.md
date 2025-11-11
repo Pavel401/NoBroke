@@ -1,6 +1,9 @@
-# MoneyApp - Personal Finance Manager
+# NoBroke - Personal Finance Manager
 
 A Flutter-based personal finance management application with AI-powered chat assistance.
+
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.nobroke.app)
+
 
 ## Features
 
@@ -10,6 +13,14 @@ A Flutter-based personal finance management application with AI-powered chat ass
 - 📊 Budget tracking
 - 🔄 Transaction categorization
 - 📤 Data export functionality
+
+## Screenshots
+
+| | | |
+|:---:|:---:|:---:|
+| ![Screenshot 1](screenshoots/Screenshot_1762880633.png) | ![Screenshot 2](screenshoots/Screenshot_1762880673.png) | ![Screenshot 3](screenshoots/Screenshot_1762880711.png) |
+| ![Screenshot 4](screenshoots/Screenshot_1762880713.png) | ![Screenshot 5](screenshoots/Screenshot_1762880715.png) | ![Screenshot 6](screenshoots/Screenshot_1762880718.png) |
+| ![Screenshot 7](screenshoots/Screenshot_1762880722.png) | ![Screenshot 8](screenshoots/Screenshot_1762880726.png) | ![Screenshot 9](screenshoots/Screenshot_1762880732.png) |
 
 ## AI Chat Backend
 
