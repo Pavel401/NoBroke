@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -7,8 +8,14 @@ import '../utils/permission_manager.dart';
 class PhotoService {
   static final ImagePicker _picker = ImagePicker();
 
-  static Future<List<String>> pickImages({int maxImages = 5}) async {
+  static Future<List<String>> pickImages({
+    int maxImages = 5,
+    BuildContext? context,
+  }) async {
     try {
+      final hasPermission = await PermissionManager.requestStoragePermissions(context);
+      if (!hasPermission) return [];
+
       final List<XFile> images = await _picker.pickMultiImage(
         imageQuality: 70,
         maxWidth: 1024,
@@ -36,7 +43,7 @@ class PhotoService {
     }
   }
 
-  static Future<String?> pickImageFromCamera() async {
+  static Future<String?> pickImageFromCamera({BuildContext? context}) async {
     try {
       final hasPermission = await PermissionManager.requestCameraPermissions();
       if (!hasPermission) return null;
@@ -57,9 +64,9 @@ class PhotoService {
     }
   }
 
-  static Future<String?> pickImageFromGallery() async {
+  static Future<String?> pickImageFromGallery({BuildContext? context}) async {
     try {
-      final hasPermission = await PermissionManager.requestStoragePermissions();
+      final hasPermission = await PermissionManager.requestStoragePermissions(context);
       if (!hasPermission) return null;
 
       final XFile? image = await _picker.pickImage(
